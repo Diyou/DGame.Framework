@@ -31,5 +31,5 @@ jobs:
         with:
           configurePreset: 'Release.WASM'
           buildPreset: 'Release.WASM'
-          buildPresetAdditionalArgs: '--target DGame.Framework'
+          buildPresetAdditionalArgs: "['--target DGame.Framework']"
         
