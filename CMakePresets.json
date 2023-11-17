@@ -67,22 +67,22 @@
       "binaryDir": "${sourceDir}/build/Release"
     },
     {
-      "name": "Debug(WASM)",
+      "name": "Debug.WASM",
       "inherits": [
         "Debug",
         "WASM"
       ],
-      "displayName": "Debug(WASM) Config",
+      "displayName": "Debug.WASM Config",
       "description": "Debug build using Emscripten Toolchain",
       "binaryDir": "${sourceDir}/build/Debug.WASM"
     },
     {
-      "name": "Release(WASM)",
+      "name": "Release.WASM",
       "inherits": [
         "Release",
         "WASM"
       ],
-      "displayName": "Release(WASM) Config",
+      "displayName": "Release.WASM Config",
       "description": "Release build using Emscripten Toolchain",
       "binaryDir": "${sourceDir}/build/Release.WASM"
     }
@@ -110,18 +110,18 @@
       "configurePreset": "Release"
     },
     {
-      "name": "Debug(WASM)",
+      "name": "Debug.WASM",
       "inherits": [
         "default"
       ],
-      "configurePreset": "Debug(WASM)"
+      "configurePreset": "Debug.WASM"
     },
     {
-      "name": "Release(WASM)",
+      "name": "Release.WASM",
       "inherits": [
         "default"
       ],
-      "configurePreset": "Release(WASM)"
+      "configurePreset": "Release.WASM"
     }
   ],
   "testPresets": [

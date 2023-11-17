@@ -7,7 +7,7 @@
 			"targets": [
 				"DGame.Engine"
 			],
-			"preset": "Debug(WASM)",
+			"preset": "Debug.WASM",
 			"command": "build",
 			"hide": true
 		},
@@ -17,13 +17,13 @@
 			"targets": [
 				"DGame.Engine"
 			],
-			"preset": "Release(WASM)",
+			"preset": "Release.WASM",
 			"command": "build",
 			"hide": true
 		},
 		{
 			"type": "shell",
-			"label": "Serve Debug(WASM)",
+			"label": "Serve Debug.WASM",
 			"command": "./emrun",
 			"windows":{
 				"command": "emrun"
@@ -47,7 +47,7 @@
 		},
 		{
 			"type": "shell",
-			"label": "Serve Release(WASM)",
+			"label": "Serve Release.WASM",
 			"command": "./emrun",
 			"windows":{
 				"command": "emrun"
