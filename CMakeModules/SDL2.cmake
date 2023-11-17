@@ -1,6 +1,7 @@
 find_package(SDL2)
 
 if(NOT ${SDL2_FOUND})
+set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
 FetchContent_Declare(

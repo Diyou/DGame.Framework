@@ -8,14 +8,8 @@ set(ENV{EMSDK} ${CACHE_DIR}/emsdk)
 set(EMSDK $ENV{EMSDK}/emsdk)
 set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
 set(EMSCRIPTEN_TOOLCHAIN ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
-include(${EMSCRIPTEN_TOOLCHAIN})
 
-if(NOT EXISTS ${EMSCRIPTEN_TOOLCHAIN})
-        execute_process(COMMAND
-                ${GIT_EXECUTABLE} clone https://github.com/emscripten-core/emsdk.git $ENV{EMSDK}
-        )
-endif()
-if(NOT ${DOWNLOAD_EMSCRIPTEN_VERSION} STREQUAL ${EMSCRIPTEN_VERSION})
+macro(UpdateEmscripten)
         execute_process(COMMAND
                 ${GIT_EXECUTABLE} pull
                 WORKING_DIRECTORY $ENV{EMSDK}
@@ -26,6 +20,19 @@ if(NOT ${DOWNLOAD_EMSCRIPTEN_VERSION} STREQUAL ${EMSCRIPTEN_VERSION})
         execute_process(COMMAND
                 ${EMSDK} activate ${DOWNLOAD_EMSCRIPTEN_VERSION}
         )
+endmacro()
+
+if(NOT EXISTS ${EMSCRIPTEN_TOOLCHAIN})
+        execute_process(COMMAND
+                ${GIT_EXECUTABLE} clone https://github.com/emscripten-core/emsdk.git $ENV{EMSDK}
+        )
+        UpdateEmscripten()
+endif()
+
+include(${EMSCRIPTEN_TOOLCHAIN})
+
+if(NOT ${DOWNLOAD_EMSCRIPTEN_VERSION} STREQUAL ${EMSCRIPTEN_VERSION})
+        UpdateEmscripten()
 endif()
 
 set(CMAKE_TOOLCHAIN_FILE ${EMSCRIPTEN_TOOLCHAIN})

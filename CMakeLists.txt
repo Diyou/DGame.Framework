@@ -5,10 +5,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 
 set(CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
 
-set(FETCHCONTENT_QUIET OFF)
 find_package(Git REQUIRED)
 
-include(FetchContent)
 include(Emscripten) # Needs to be included before project()
 
 # Define Build Targets
