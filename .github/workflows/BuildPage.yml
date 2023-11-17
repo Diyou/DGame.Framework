@@ -3,6 +3,7 @@ name: Build example page with emscripten
 env:
   EM_VERSION: 3.1.47
   EM_CACHE_FOLDER: '.cache/emsdk'
+  DIST_DIR: 'build/Release.WASM/dist'
 
 on:
   push:
@@ -11,7 +12,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  Emscripten-Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,4 +33,8 @@ jobs:
           configurePreset: 'Release.WASM'
           buildPreset: 'Release.WASM'
           buildPresetAdditionalArgs: "['--target DGame.Framework']"
+      - name: Upload Pages Artifacts
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ${{env.DIST_DIR}}
         
