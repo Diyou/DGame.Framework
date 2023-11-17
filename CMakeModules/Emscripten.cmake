@@ -3,9 +3,11 @@ option(USE_EMSCRIPTEN "Use Emscripten toolchain" OFF)
 
 if(${USE_EMSCRIPTEN})
 
+if(NOT ENV{EMSDK})
+
 set(DOWNLOAD_EMSCRIPTEN_VERSION 3.1.47)
 set(ENV{EMSDK} ${CACHE_DIR}/emsdk)
-set(EMSDK $ENV{EMSDK}/emsdk)
+set(EMSDK_COMMAND $ENV{EMSDK}/emsdk)
 set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
 set(EMSCRIPTEN_TOOLCHAIN ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
 
@@ -15,10 +17,10 @@ macro(UpdateEmscripten)
                 WORKING_DIRECTORY $ENV{EMSDK}
         )
         execute_process(COMMAND
-                ${EMSDK} install ${DOWNLOAD_EMSCRIPTEN_VERSION}
+                ${EMSDK_COMMAND} install ${DOWNLOAD_EMSCRIPTEN_VERSION}
         )
         execute_process(COMMAND
-                ${EMSDK} activate ${DOWNLOAD_EMSCRIPTEN_VERSION}
+                ${EMSDK_COMMAND} activate ${DOWNLOAD_EMSCRIPTEN_VERSION}
         )
 endmacro()
 
@@ -34,6 +36,11 @@ include(${EMSCRIPTEN_TOOLCHAIN})
 if(NOT ${DOWNLOAD_EMSCRIPTEN_VERSION} STREQUAL ${EMSCRIPTEN_VERSION})
         UpdateEmscripten()
 endif()
+
+else(NOT ENV{EMSDK})
+set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
+set(EMSCRIPTEN_TOOLCHAIN ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
+endif(NOT ENV{EMSDK})
 
 set(CMAKE_TOOLCHAIN_FILE ${EMSCRIPTEN_TOOLCHAIN})
 
