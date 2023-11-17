@@ -29,7 +29,7 @@ jobs:
       - name: Build Target
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: 'Release(WASM)'
-          buildPreset: 'Release(WASM)'
+          configurePreset: 'Release.WASM'
+          buildPreset: 'Release.WASM'
           buildPresetAdditionalArgs: '--target DGame.Framework'
         
