@@ -1,0 +1,73 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "DGame.Engine.html(Debug)",
+			"targets": [
+				"DGame.Engine"
+			],
+			"preset": "Debug(WASM)",
+			"command": "build",
+			"hide": true
+		},
+		{
+			"type": "cmake",
+			"label": "DGame.Engine.html(Release)",
+			"targets": [
+				"DGame.Engine"
+			],
+			"preset": "Release(WASM)",
+			"command": "build",
+			"hide": true
+		},
+		{
+			"type": "shell",
+			"label": "Serve Debug(WASM)",
+			"command": "./emrun",
+			"windows":{
+				"command": "emrun"
+			},
+			"args": [
+				"--no_browser",
+				"${workspaceFolder}/build/Debug.WASM/dist/DGame.Engine.html"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.cache/emsdk/upstream/emscripten"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"problemMatcher": [],
+			"detail": "Serve DGame.Engine.html",
+			"dependsOn": [
+				"DGame.Engine.html(Debug)"
+			]
+		},
+		{
+			"type": "shell",
+			"label": "Serve Release(WASM)",
+			"command": "./emrun",
+			"windows":{
+				"command": "emrun"
+			},
+			"args": [
+				"--no_browser",
+				"${workspaceFolder}/build/Release.WASM/dist/DGame.Engine.html"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.cache/emsdk/upstream/emscripten"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"problemMatcher": [],
+			"detail": "Serve DGame.Engine.html",
+			"dependsOn": [
+				"DGame.Engine.html(Release)"
+			]
+		}
+	]
+}

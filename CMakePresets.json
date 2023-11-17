@@ -1,0 +1,139 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "multilib",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_FLAGS": "-m32",
+        "CMAKE_CXX_FLAGS": "-m32"
+      }
+    },
+    {
+      "name": "WASM",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_EMSCRIPTEN": true
+      }
+    },
+    {
+      "name": "Default",
+      "hidden": true,
+      "cacheVariables": {
+        "DAWN_BUILD_SAMPLES": "OFF",
+        "CMAKE_POLICY_DEFAULT_CMP0148":"OLD"
+      },
+      "environment": {
+        "DEPOT_TOOLS_UPDATE": "0",
+        "CC": "clang",
+        "CXX": "clang++"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "enableClangTidyCodeAnalysis": true,
+          "intelliSenseMode": "windows-clang-x64"
+        }
+      }
+    },
+    {
+      "name": "Debug",
+      "inherits": [
+        "Default"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "displayName": "Debug Config",
+      "description": "Debug build using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/Debug"
+    },
+    {
+      "name": "Release",
+      "inherits": [
+        "Default"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "displayName": "Release Config",
+      "description": "Release build using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/Release"
+    },
+    {
+      "name": "Debug(WASM)",
+      "inherits": [
+        "Debug",
+        "WASM"
+      ],
+      "displayName": "Debug(WASM) Config",
+      "description": "Debug build using Emscripten Toolchain",
+      "binaryDir": "${sourceDir}/build/Debug.WASM"
+    },
+    {
+      "name": "Release(WASM)",
+      "inherits": [
+        "Release",
+        "WASM"
+      ],
+      "displayName": "Release(WASM) Config",
+      "description": "Release build using Emscripten Toolchain",
+      "binaryDir": "${sourceDir}/build/Release.WASM"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "targets": [
+        "DGame.Framework"
+      ]
+    },
+    {
+      "name": "Debug",
+      "inherits": [
+        "default"
+      ],
+      "configurePreset": "Debug"
+    },
+    {
+      "name": "Release",
+      "inherits": [
+        "default"
+      ],
+      "configurePreset": "Release"
+    },
+    {
+      "name": "Debug(WASM)",
+      "inherits": [
+        "default"
+      ],
+      "configurePreset": "Debug(WASM)"
+    },
+    {
+      "name": "Release(WASM)",
+      "inherits": [
+        "default"
+      ],
+      "configurePreset": "Release(WASM)"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "Unit Tests",
+      "configurePreset": "Debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "stopOnFailure": true
+      }
+    }
+  ]
+}
