@@ -1,4 +1,4 @@
-# DGame.Framework
+# DGame.Framework (Work in Progress)
 This Framework sets up a basic environment to begin game development with webgpu in c++ including the [essential tools](#libraries) and [examples](Examples).
 
 ## Disclaimer
@@ -25,4 +25,4 @@ Library|Usecase|License
 [OpenUSD](https://github.com/PixarAnimationStudios/OpenUSD)|Scene parsing|[Apache-2](https://github.com/PixarAnimationStudios/OpenUSD/blob/release/LICENSE.txt)
 
 ### License
-DGame.Framework is released under the [MIT License](LICENSE)
+DGame.Framework is licensed under the [MIT License](LICENSE)
