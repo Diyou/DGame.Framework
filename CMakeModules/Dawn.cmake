@@ -7,6 +7,7 @@ execute_process(
 COMMAND
     ${GIT_EXECUTABLE} clone --depth 1 --branch ${DAWN_TAG} https://dawn.googlesource.com/dawn ${DAWN_DIR}
 )
+
 set(DAWN_FETCH_DEPENDENCIES ON)
 endif()
 
@@ -36,7 +37,6 @@ COMMAND
     WORKING_DIRECTORY ${DAWN_DIR}
 )
 
-file(WRITE ${CACHE_DIR}/dawn_version ${DAWN_TAG})
 set(DAWN_FETCH_DEPENDENCIES ON)
 endif()
 
