@@ -10,7 +10,7 @@ set(EMSCRIPTEN_TOOLCHAIN ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cm
 
 else()
 
-set(DOWNLOAD_EMSCRIPTEN_VERSION 3.1.47)
+set(DOWNLOAD_EMSCRIPTEN_VERSION 3.1.48)
 set(ENV{EMSDK} ${CACHE_DIR}/emsdk)
 set(EMSDK_COMMAND $ENV{EMSDK}/emsdk)
 set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
@@ -52,12 +52,14 @@ set(CMAKE_TOOLCHAIN_FILE ${EMSCRIPTEN_TOOLCHAIN})
 # See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
 add_library(DGame.EMSlib INTERFACE)
 
+# See https://github.com/emscripten-core/emscripten/blob/main/src/settings.js
 target_link_options(DGame.EMSlib
 INTERFACE
         -sUSE_WEBGPU
         -sASYNCIFY
         -sENVIRONMENT=web,worker
         -sWASM=1
+        -sWASM_BIGINT=1
         --output_eol=linux
         #-sMEMORY64
 $<$<CONFIG:Debug>:
@@ -82,11 +84,14 @@ INTERFACE
 )
 target_link_options(DGame.EMSlib_mt
 INTERFACE
+        #-sEXPORT_NAME=DGame
+        #-sMODULARIZE=1
         -sOFFSCREENCANVAS_SUPPORT=1
         -sOFFSCREEN_FRAMEBUFFER=1
         -sUSE_PTHREADS=1
-        -sPROXY_TO_PTHREAD
-        #-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
+        -sPROXY_TO_PTHREAD=1
+        -pthread
+        -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
         -sINVOKE_RUN=0
 $<$<CONFIG:Debug>:      
         --emrun
