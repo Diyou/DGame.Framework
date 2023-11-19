@@ -3,9 +3,9 @@
 	"tasks": [
 		{
 			"type": "cmake",
-			"label": "DGame.Engine.html(Debug)",
+			"label": "DGame.Framework.html(Debug)",
 			"targets": [
-				"DGame.Engine"
+				"DGame.Framework"
 			],
 			"preset": "Debug.WASM",
 			"command": "build",
@@ -13,9 +13,9 @@
 		},
 		{
 			"type": "cmake",
-			"label": "DGame.Engine.html(Release)",
+			"label": "DGame.Framework.html(Release)",
 			"targets": [
-				"DGame.Engine"
+				"DGame.Framework"
 			],
 			"preset": "Release.WASM",
 			"command": "build",
@@ -30,7 +30,7 @@
 			},
 			"args": [
 				"--no_browser",
-				"${workspaceFolder}/build/Debug.WASM/dist/DGame.Engine.html"
+				"${workspaceFolder}/build/Debug.WASM/dist/DGame.Framework.html"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/.cache/emsdk/upstream/emscripten"
@@ -40,9 +40,9 @@
 				"isDefault": false
 			},
 			"problemMatcher": [],
-			"detail": "Serve DGame.Engine.html",
+			"detail": "Serve DGame.Framework.html",
 			"dependsOn": [
-				"DGame.Engine.html(Debug)"
+				"DGame.Framework.html(Debug)"
 			]
 		},
 		{
@@ -54,7 +54,7 @@
 			},
 			"args": [
 				"--no_browser",
-				"${workspaceFolder}/build/Release.WASM/dist/DGame.Engine.html"
+				"${workspaceFolder}/build/Release.WASM/dist/DGame.Framework.html"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/.cache/emsdk/upstream/emscripten"
@@ -64,9 +64,9 @@
 				"isDefault": false
 			},
 			"problemMatcher": [],
-			"detail": "Serve DGame.Engine.html",
+			"detail": "Serve DGame.Framework.html",
 			"dependsOn": [
-				"DGame.Engine.html(Release)"
+				"DGame.Framework.html(Release)"
 			]
 		}
 	]

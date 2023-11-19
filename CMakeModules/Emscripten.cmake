@@ -46,31 +46,56 @@ endif(DEFINED ENV{EMSDK})
 
 set(CMAKE_TOOLCHAIN_FILE ${EMSCRIPTEN_TOOLCHAIN})
 
-add_link_options(
-        #-sMIN_WEBGL_VERSION=2
-        #-sMAX_WEBGL_VERSION=2
-        -fsanitize=undefined
-        -sOFFSCREENCANVAS_SUPPORT=1
-        -sOFFSCREEN_FRAMEBUFFER=1
+### Define Emscripten Interface Libraries
+
+# This target should not rely on SharedArrayBuffer
+# See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
+add_library(DGame.EMSlib INTERFACE)
+
+target_link_options(DGame.EMSlib
+INTERFACE
+        -sUSE_WEBGPU
+        -sASYNCIFY
         -sENVIRONMENT=web,worker
         -sWASM=1
-        -sUSE_WEBGPU
-        #-sUSE_GLFW=3
-        -sASYNCIFY
+        --output_eol=linux
+        #-sMEMORY64
+$<$<CONFIG:Debug>:
+        -fsanitize=undefined
         -sASSERTIONS=2
         -sSAFE_HEAP=1
+        -Wno-limited-postlink-optimizations
+>)
+target_compile_options(DGame.EMSlib
+INTERFACE
+        -sUSE_SDL=2
+        #-sMEMORY64
+$<$<CONFIG:Debug>:
+        -fsanitize=undefined
+>)
+
+# This target relies on SharedArrayBuffer for Multithreading
+add_library(DGame.EMSlib_mt INTERFACE)
+target_link_libraries(DGame.EMSlib_mt
+INTERFACE 
+        DGame.EMSlib
+)
+target_link_options(DGame.EMSlib_mt
+INTERFACE
+        -sOFFSCREENCANVAS_SUPPORT=1
+        -sOFFSCREEN_FRAMEBUFFER=1
         -sUSE_PTHREADS=1
-        #-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
         -sPROXY_TO_PTHREAD
-        --emrun
+        #-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
         -sINVOKE_RUN=0
+$<$<CONFIG:Debug>:      
+        --emrun
+>)
+target_compile_options(DGame.EMSlib_mt
+INTERFACE
+        -pthread
 )
 
-# -sMEMORY64 -pthread 
-set(EMSCRIPTEN_FLAGS " -pthread  -sUSE_SDL=2 -O3 -s DISABLE_EXCEPTION_CATCHING=1")
-
-string(APPEND CMAKE_CXX_FLAGS " ${EMSCRIPTEN_FLAGS}")
-string(APPEND CMAKE_C_FLAGS " -D_DEFAULT_SOURCE=1 ${EMSCRIPTEN_FLAGS}")
-string(APPEND CMAKE_EXE_LINKER_FLAGS " ${EMSCRIPTEN_FLAGS}  --output_eol=linux")
+string(APPEND CMAKE_C_FLAGS " -D_DEFAULT_SOURCE=1")
 
 endif(${USE_EMSCRIPTEN})

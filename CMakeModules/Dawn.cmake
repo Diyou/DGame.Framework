@@ -7,13 +7,19 @@ execute_process(
 COMMAND
     ${GIT_EXECUTABLE} clone --depth 1 --branch ${DAWN_TAG} https://dawn.googlesource.com/dawn ${DAWN_DIR}
 )
-file(WRITE ${CACHE_DIR}/dawn_version ${DAWN_TAG})
 set(DAWN_FETCH_DEPENDENCIES ON)
 endif()
 
-file(STRINGS ${CACHE_DIR}/dawn_version DAWN_VERSION NEWLINE_CONSUME)
+execute_process(
+COMMAND 
+    ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY ${DAWN_DIR}
+    OUTPUT_VARIABLE DAWN_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 if(NOT ${DAWN_TAG} STREQUAL ${DAWN_VERSION})
+message("Update Dawn to: ${DAWN_TAG}")
 execute_process(
 COMMAND
     ${GIT_EXECUTABLE} remote set-branches origin ${DAWN_TAG}

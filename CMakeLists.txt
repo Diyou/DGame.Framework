@@ -40,7 +40,12 @@ target_link_options(DGame.Framework
 PRIVATE
         --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
 )
+target_link_libraries(DGame.Framework
+PRIVATE DGame.EMSlib
+)
+
 else()
+
 include(Dawn)
 include(SDL2)
 target_sources(DGame.Framework
