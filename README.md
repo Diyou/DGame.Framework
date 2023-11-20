@@ -3,7 +3,8 @@ This Framework sets up a basic environment to begin game development with webgpu
 
 ## Disclaimer
 DGame.Framework and webgpu are both in an early experimental stage.  
-Instabilities and breakages should be expected.  
+Instabilities and breakages should be expected.
+The api and license of DGame.Framework might be reevaluated in the future.  
 It is adviced to refrain from using this in production and may rather be used for educational purposes for the time being.
 
 ## Table of Content
