@@ -106,6 +106,12 @@ Window::Window(const char *title, int width, int height)
 		cerr << SDL_GetError() << endl;
 		throw runtime_error("Could not create SDL Window");
 	}
+	SDL_SetWindowData(window, "DGame::Window", this);
+}
+
+Window *Window::FromSDLWindow(SDL_Window *window)
+{
+	return (Window*)SDL_GetWindowData(window, "DGame::Window");
 }
 
 unique_ptr<ChainedStruct> Window::createSurfaceDescriptor()
