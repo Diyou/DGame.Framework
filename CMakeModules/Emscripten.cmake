@@ -90,8 +90,8 @@ INTERFACE
         -sOFFSCREEN_FRAMEBUFFER=1
         -sUSE_PTHREADS=1
         -sPROXY_TO_PTHREAD=1
-        -pthread
         -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
+        -pthread
         -sINVOKE_RUN=0
 $<$<CONFIG:Debug>:      
         --emrun

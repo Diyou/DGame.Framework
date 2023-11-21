@@ -83,23 +83,21 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 	surface = implementation->createSurface("canvas#DGameViewport");
 	swapchain = implementation->createSwapChain(device, surface);
 	queue = device.GetQueue();
-	
+
 	/*queue.OnSubmittedWorkDone(WGPUQueueWorkDoneStatus_Success, [](WGPUQueueWorkDoneStatus status, void* userData){
-		cout << status << endl;
+	    cout << status << endl;
 	},this);
 	*/
 }
 
 void Backend::Start()
 {
-	emscripten_request_animation_frame_loop(
-	    [](double time, void *userData) -> EM_BOOL {
-		    Backend *_this = static_cast<Backend *>(userData);
-		    _this->draw();
-		    return _this->IsRendering;
-	    },
-	    this
-	);
+	auto cb = [](double time, void *userData) -> EM_BOOL {
+		auto _this = (Backend *)userData;
+		_this->draw();
+		return _this->IsRendering;
+	};
+	emscripten_request_animation_frame_loop(cb, this);
 }
 
 void Backend::Yield()

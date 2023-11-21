@@ -2,11 +2,10 @@
 
 #include "webgpu/webgpu_cpp.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
-#include <iostream>
 #include <memory>
-#include <sstream>
+#include <string>
 
 namespace DGame
 {
@@ -17,10 +16,8 @@ namespace DGame
 struct Window
 {
 	SDL_Window *window;
-	std::string title, driver;
+	std::string title;
 	int width, height;
-
-	bool supportWayland = false;
 
 	wgpu::BackendType BackendType;
 
