@@ -4,6 +4,7 @@
 
 #include <SDL.h>
 
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -29,6 +30,28 @@ struct Window
 	 * @return DGame::Window pointer
 	 */
 	static Window *FromSDLWindow(SDL_Window *window);
+
+	void onWindowEvent(SDL_WindowEvent &event)
+	{
+		switch (event.event)
+		{
+		case SDL_WINDOWEVENT_MINIMIZED:
+			std::cout << "mini me" << std::endl;
+			break;
+		case SDL_WINDOWEVENT_CLOSE:
+			std::cout << "I died" << std::endl;
+			break;
+		}
+	}
+
+	void onMouseButtonEvent(SDL_MouseButtonEvent &event)
+	{
+		std::cout << "click" << std::endl;
+	}
+	void onMouseMotionEvent(SDL_MouseMotionEvent &event)
+	{
+		std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
+	}
 
 	std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
 

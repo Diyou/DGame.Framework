@@ -208,8 +208,23 @@ void Backend::Start()
 
 		while (SDL_PollEvent(&Event))
 		{
+			auto sdl_window = SDL_GetWindowFromID(Event.window.windowID);
+			auto window = sdl_window ? Window::FromSDLWindow(sdl_window) : NULL;
 			switch (Event.type)
 			{
+			case SDL_WINDOWEVENT:
+				if (window)
+					window->onWindowEvent(Event.window);
+				break;
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEBUTTONDOWN:
+				if (window)
+					window->onMouseButtonEvent(Event.button);
+				break;
+				case SDL_MOUSEMOTION:
+				if (window)
+					window->onMouseMotionEvent(Event.motion);
+				break;
 			case SDL_QUIT:
 				IsRendering = false;
 				break;
