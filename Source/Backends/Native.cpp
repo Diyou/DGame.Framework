@@ -210,6 +210,8 @@ void Backend::Start()
 		{
 			auto sdl_window = SDL_GetWindowFromID(Event.window.windowID);
 			auto window = sdl_window ? Window::FromSDLWindow(sdl_window) : NULL;
+			
+			// see https://wiki.libsdl.org/SDL2/SDL_Event
 			switch (Event.type)
 			{
 			case SDL_WINDOWEVENT:

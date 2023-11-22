@@ -111,7 +111,7 @@ Window::Window(const char *title, int width, int height)
 
 Window *Window::FromSDLWindow(SDL_Window *window)
 {
-	return (Window*)SDL_GetWindowData(window, "DGame::Window");
+	return (Window *)SDL_GetWindowData(window, "DGame::Window");
 }
 
 unique_ptr<ChainedStruct> Window::createSurfaceDescriptor()

@@ -20,7 +20,7 @@ It is adviced to refrain from using this in production and may rather be used fo
 ### Libraries
 Library|Usecase|License
 :--- | :--- | :---
-[boost](https://www.boost.org/)|Thread Pools,Netcode|[boost-1](https://www.boost.org/users/license.html)
+[boost](https://www.boost.org/)|Thread Pools,Netcode|[BSL-1.0](https://www.boost.org/users/license.html)
 [glm](https://github.com/g-truc/glm)|Vector Math|[MIT](https://github.com/g-truc/glm/blob/master/copying.txt)
 [dawn](https://dawn.googlesource.com/)|Native webgpu implementation|[BSD-3](https://dawn.googlesource.com/dawn/+/HEAD/LICENSE)
 [OpenUSD](https://github.com/PixarAnimationStudios/OpenUSD)|Scene parsing|[Apache-2](https://github.com/PixarAnimationStudios/OpenUSD/blob/release/LICENSE.txt)
