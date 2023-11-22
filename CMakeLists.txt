@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 # Setup Environment first
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Source/CMakeModules)
 
 set(CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
 
@@ -41,7 +41,7 @@ PRIVATE
         --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
 )
 target_link_libraries(DGame.Framework
-PRIVATE DGame.EMSlib
+PRIVATE DGame.EMSlib_mt
 )
 
 else()
