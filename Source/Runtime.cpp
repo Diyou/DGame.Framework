@@ -15,10 +15,6 @@ class Runtime
 	    : renderer(std::make_shared<DGame::Scene>(DGame::Examples::Triangle))
 	{
 		renderer.Start();
-		while (renderer.IsRendering)
-		{
-			renderer.Yield();
-		}
 	};
 };
 

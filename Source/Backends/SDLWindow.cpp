@@ -2,10 +2,13 @@
 
 #include <SDL_syswm.h>
 
+#include <future>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 using namespace std;
+using namespace chrono;
 using namespace wgpu;
 
 namespace DGame
@@ -16,6 +19,10 @@ struct SDLRuntime
 	vector<BackendType> SupportedBackends;
 	vector<string> AvailableDrivers;
 	string Driver, PreferredDriver;
+	/**
+	 * @brief Delay in microseconds
+	 */
+	uint64_t PollingDelay = 1000;
 
 	SDLRuntime(SDLRuntime &) = delete;
 	void operator=(const SDLRuntime &) = delete;
@@ -27,6 +34,7 @@ struct SDLRuntime
 	}
 
 private:
+	future<void> loop;
 	explicit SDLRuntime()
 	{
 		SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
@@ -84,6 +92,37 @@ private:
 		cout << "Usable Driver(" << driverOutput.str() << ")\nInitiated with: " << Driver << endl;
 
 		SDL_Init(SDL_INIT_GAMECONTROLLER);
+		loop = async(launch::async, &SDLRuntime::ProcessEvents, this);
+	}
+
+	void ProcessEvents()
+	{
+		while (bool isRunning = true)
+		{
+			SDL_Event Event;
+			while (SDL_PollEvent(&Event))
+			{
+				// see https://wiki.libsdl.org/SDL2/SDL_Event
+				switch (Event.type)
+				{
+				case SDL_WINDOWEVENT:
+					Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID))->onWindowEvent(Event.window);
+					break;
+				case SDL_MOUSEBUTTONUP:
+				case SDL_MOUSEBUTTONDOWN:
+					Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID))->onMouseButtonEvent(Event.button);
+					break;
+				case SDL_MOUSEMOTION:
+					Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID))->onMouseMotionEvent(Event.motion);
+					break;
+				case SDL_QUIT:
+					isRunning = false;
+					loop.wait();
+					break;
+				}
+			}
+			this_thread::sleep_for(microseconds(PollingDelay));
+		}
 	}
 
 public:

@@ -41,7 +41,7 @@ PRIVATE
         --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
 )
 target_link_libraries(DGame.Framework
-PRIVATE DGame.EMSlib_mt
+PRIVATE DGame.EMSlib
 )
 
 else()

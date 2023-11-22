@@ -16,6 +16,8 @@ class Backend
 {
 	struct IBackend;
 	std::unique_ptr<IBackend> implementation;
+	
+	bool &IsRendering;
 
 protected:
 	wgpu::Device device;
@@ -32,18 +34,11 @@ public:
 	 *  @param windowHeight:	The window height.
 	 */
 	Backend(const char *windowTitle, int windowWidth, int windowHeight);
-	
-	bool IsRendering = true;
 
 	/** @fn void Backend::Start()
 	 *  @brief Start Rendering
 	 */
 	void Start();
-
-	/** @fn void Backend::Yield()
-	 *  @brief Yield control back to the Backend.
-	 */
-	void Yield();
 
 	virtual ~Backend();
 };

@@ -36,6 +36,7 @@ struct Backend::IBackend
 {
 	Instance instance;
 	int windowWidth, windowHeight;
+	bool isAlive = true;
 
 	IBackend(const char *windowTitle, int windowWidth, int windowHeight)
 	    : instance(CreateInstance())
@@ -76,6 +77,7 @@ struct Backend::IBackend
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
     : implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+    , IsRendering(implementation->isAlive)
 {
 	assert(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) == 0);
 
@@ -98,11 +100,10 @@ void Backend::Start()
 		return _this->IsRendering;
 	};
 	emscripten_request_animation_frame_loop(cb, this);
-}
-
-void Backend::Yield()
-{
-	emscripten_sleep(0);
+	while (IsRendering)
+	{
+		emscripten_sleep(0);
+	}
 }
 
 Backend::~Backend()

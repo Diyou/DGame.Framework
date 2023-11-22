@@ -188,6 +188,7 @@ struct Backend::IBackend : public Window
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
     : implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+    , IsRendering(implementation->isAlive)
 {
 	device = implementation->createDevice();
 	surface = implementation->createSurface();
@@ -199,50 +200,17 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 
 void Backend::Start()
 {
-	// worker = std::async(std::launch::async, [&]() -> void {
-	while (IsRendering)
-	{
-		implementation->iterate();
-
-		SDL_Event Event;
-
-		while (SDL_PollEvent(&Event))
+	auto worker = std::async(std::launch::async, [&]() -> void {
+		while (IsRendering)
 		{
-			auto sdl_window = SDL_GetWindowFromID(Event.window.windowID);
-			auto window = sdl_window ? Window::FromSDLWindow(sdl_window) : NULL;
-			
-			// see https://wiki.libsdl.org/SDL2/SDL_Event
-			switch (Event.type)
-			{
-			case SDL_WINDOWEVENT:
-				if (window)
-					window->onWindowEvent(Event.window);
-				break;
-			case SDL_MOUSEBUTTONUP:
-			case SDL_MOUSEBUTTONDOWN:
-				if (window)
-					window->onMouseButtonEvent(Event.button);
-				break;
-				case SDL_MOUSEMOTION:
-				if (window)
-					window->onMouseMotionEvent(Event.motion);
-				break;
-			case SDL_QUIT:
-				IsRendering = false;
-				break;
-			}
+			implementation->iterate();
+
+			// Render Frame
+			draw();
+			swapchain.Present();
 		}
-
-		// Render Frame
-		draw();
-		swapchain.Present();
-	}
-	//});
-}
-
-void Backend::Yield()
-{
-	this_thread::sleep_for(microseconds(0));
+	});
+	worker.wait();
 }
 
 Backend::~Backend()

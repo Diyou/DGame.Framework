@@ -20,6 +20,8 @@ struct Window
 	std::string title;
 	int width, height;
 
+	bool isAlive = true;
+
 	wgpu::BackendType BackendType;
 
 	Window(const char *title, int width, int height);
@@ -40,6 +42,7 @@ struct Window
 			break;
 		case SDL_WINDOWEVENT_CLOSE:
 			std::cout << "I died" << std::endl;
+			isAlive = false;
 			break;
 		}
 	}
