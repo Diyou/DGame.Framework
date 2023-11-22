@@ -46,8 +46,17 @@ struct Window
 
 	void onMouseButtonEvent(SDL_MouseButtonEvent &event)
 	{
-		std::cout << "click" << std::endl;
+		switch (event.type)
+		{
+		case SDL_MOUSEBUTTONDOWN:
+			std::cout << "button pressed" << std::endl;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			std::cout << "button released" << std::endl;
+			break;
+		}
 	}
+
 	void onMouseMotionEvent(SDL_MouseMotionEvent &event)
 	{
 		std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
