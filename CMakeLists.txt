@@ -46,14 +46,14 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Define WASM Build Targets
 if(${EMSCRIPTEN})
 set(CMAKE_EXECUTABLE_SUFFIX .html)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist)
-add_library(DGame.Framework STATIC)
 
-target_sources(DGame.Framework
-PRIVATE
+# Run python3 -m http.server --directory ${CMAKE_BINARY_DIR}/dist
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist)
+
+add_library(DGame.Framework STATIC
         Source/Backends/Browser.cpp
 )
-# Run python3 -m http.server --directory ${CMAKE_BINARY_DIR}/dist
+
 target_link_options(DGame.Framework
 INTERFACE
         --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
@@ -62,18 +62,17 @@ target_link_libraries(DGame.Framework
 PRIVATE 
         DGame.EMSlib
 )
-else()
+else(${EMSCRIPTEN})
+include(Dawn)
+include(SDL2)
 # Define Native Build Targets
-add_library(DGame.Framework)
+add_library(DGame.Framework
+        Source/Backends/Native.cpp
+)
+
 set_target_properties(DGame.Framework
 PROPERTIES
         PREFIX ""
-)
-include(Dawn)
-include(SDL2)
-target_sources(DGame.Framework
-PRIVATE 
-        Source/Backends/Native.cpp
 )
 
 target_link_libraries(DGame.Framework
@@ -82,7 +81,7 @@ PUBLIC  webgpu_cpp
         SDL2::SDL2
 )
 
-endif()
+endif(${EMSCRIPTEN})
 
 target_include_directories(DGame.Framework
 PUBLIC 
