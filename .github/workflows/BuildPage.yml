@@ -1,40 +1,39 @@
 name: Build example page with emscripten
 
 env:
-  EM_VERSION: 3.1.47
-  EM_CACHE_FOLDER: '.cache/emsdk'
-  DIST_DIR: 'build/Release.WASM/dist'
+ EM_VERSION: 3.1.47
+ EM_CACHE_FOLDER: ".cache/emsdk"
+ DIST_DIR: "build/Release.WASM/dist"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+ push:
+  branches: ["main"]
+ pull_request:
+  branches: ["main"]
 
 jobs:
-  Emscripten-Build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ${{env.EM_CACHE_FOLDER}}
-          key: ${{env.EM_VERSION}}-${{ runner.os }}
-      - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v12
-        with:
-          version: ${{env.EM_VERSION}}
-          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
-      - name: Setup CMake
-        uses: lukka/get-cmake@latest
-      - name: Build Target
-        uses: lukka/run-cmake@v10
-        with:
-          configurePreset: 'Release.WASM'
-          buildPreset: 'Release.WASM'
-          buildPresetAdditionalArgs: "['--target DGame.Framework']"
-      - name: Upload Pages Artifacts
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ${{env.DIST_DIR}}
-        
+ Emscripten-Build:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v3
+   - uses: actions/cache@v3
+     with:
+      path: ${{env.EM_CACHE_FOLDER}}
+      key: ${{env.EM_VERSION}}-${{ runner.os }}
+   - name: Setup Emscripten
+     uses: mymindstorm/setup-emsdk@v12
+     with:
+      version: ${{env.EM_VERSION}}
+      actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
+   - name: Setup CMake
+     uses: lukka/get-cmake@latest
+   - name: Build Target
+     uses: lukka/run-cmake@v10
+     with:
+      configurePreset: "Release.WASM"
+      buildPreset: "Release.WASM"
+      buildPresetAdditionalArgs: "['--target DGame.Framework']"
+   - name: Upload Pages Artifacts
+     uses: actions/upload-pages-artifact@v2
+     with:
+      path: ${{env.DIST_DIR}}

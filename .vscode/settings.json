@@ -1,8 +1,13 @@
 {
     "licenser.author": "Diyou",
     "licenser.license": "Custom",
-    "licenser.customHeaderFile": "${workspaceFolder}/LICENSE",
+    "licenser.customHeader": "@FILENAME@ - @PROJECT@\n\nCopyright (c) @YEAR@ @AUTHOR@\nAll rights reserved.\n\nThis source code is licensed under the MIT license found in the\nLICENSE file in the root directory of this source tree.",
+    "licenser.useSingleLineStyle": false,
+    "licenser.disableAutoHeaderInsertion": false,
     "licenser.disableAutoSave": false,
+    "cmake.configureOnOpen": true,
+    "cmake.useCMakePresets": "always",
+    "cmake.options.statusBarVisibility": "compact",
     "editor.formatOnSave": true,
     "files.associations": {
         "iostream": "cpp",
@@ -157,20 +162,18 @@
         "**/bower_components": true,
         "**/*.code-search": true
     },
-    "cmake.configureOnOpen": true,
-    "cmake.options.statusBarVisibility": "compact",
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
-    "prettier.enable": false
-    //.
-    //"files.exclude": {
-    //    ".cache/**": true,
-    //    "build/**": true,
-    //    "**/.git": true,
-    //    "**/.svn": true,
-    //    "**/.hg": true,
-    //    "**/CVS": true,
-    //    "**/.DS_Store": true,
-    //    "**/Thumbs.db": true
-    //}
+    "files.exclude": {
+        ".cache/**": true,
+        "build/**": true,
+        "**/.git": true,
+        "**/.github": true,
+        "**/.vscode": false,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    }
 }

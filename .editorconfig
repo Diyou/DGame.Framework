@@ -9,3 +9,8 @@ tab_width = 4
 
 [*.{h,cpp}]
 charset = utf-8
+
+[*.{yml,yaml,html}]
+indent_style = space
+indent_size = 1
+tab_width = 1
