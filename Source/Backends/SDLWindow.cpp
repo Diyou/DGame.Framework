@@ -84,7 +84,7 @@ struct SDLRuntime
 		auto SDL_VIDEODRIVER = getenv("SDL_VIDEODRIVER");
 		string requestedDriver = SDL_VIDEODRIVER ? SDL_VIDEODRIVER : "";
 		if (find(AvailableDrivers.begin(), AvailableDrivers.end(), requestedDriver) != AvailableDrivers.end()
-		    && SDL_VideoInit(requestedDriver.c_str()) == 0)
+			&& SDL_VideoInit(requestedDriver.c_str()) == 0)
 		{
 			cout << "User asked for " << requestedDriver << '\n';
 			Driver = requestedDriver;
@@ -103,12 +103,12 @@ struct SDLRuntime
 		stringstream driverOutput;
 		const char *separator = "";
 		for_each(
-		    AvailableDrivers.begin(),
-		    AvailableDrivers.end(),
-		    [&driverOutput, &separator](const string driver) -> void {
-			    driverOutput << separator << driver;
-			    separator = ",";
-		    }
+			AvailableDrivers.begin(),
+			AvailableDrivers.end(),
+			[&driverOutput, &separator](const string driver) -> void {
+				driverOutput << separator << driver;
+				separator = ",";
+			}
 		);
 		cout << "Usable Driver(" << driverOutput.str() << ")\nInitiated with: " << Driver << endl;
 

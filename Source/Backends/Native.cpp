@@ -96,7 +96,7 @@ struct Backend::IBackend : public Window
 	 * @param windowHeight
 	 */
 	IBackend(const char *windowTitle, int windowWidth, int windowHeight)
-	    : Window(windowTitle, windowWidth, windowHeight)
+		: Window(windowTitle, windowWidth, windowHeight)
 	{
 		{
 			// Create Instance
@@ -132,8 +132,8 @@ struct Backend::IBackend : public Window
 			adapter.GetProperties(&adapterProperties);
 			stringstream ss;
 			ss
-			    //<<	"Type:" 	<< adapterProperties.adapterType
-			    << "\nGPU: " << adapterProperties.name << "\nDriver: " << adapterProperties.driverDescription;
+				//<<        "Type:"         << adapterProperties.adapterType
+				<< "\nGPU: " << adapterProperties.name << "\nDriver: " << adapterProperties.driverDescription;
 
 			cout << ss.str() << endl;
 			return adapterProperties.adapterType == adapterType;
@@ -195,7 +195,7 @@ struct Backend::IBackend : public Window
 		descriptor.presentMode = PresentMode::Fifo;
 
 		return SwapChain::Acquire(
-		    procs.deviceCreateSwapChain(device.Get(), surface.Get(), (WGPUSwapChainDescriptor *)&descriptor)
+			procs.deviceCreateSwapChain(device.Get(), surface.Get(), (WGPUSwapChainDescriptor *)&descriptor)
 		);
 	}
 
@@ -207,8 +207,8 @@ struct Backend::IBackend : public Window
 };
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-    : implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
-    , IsRendering(implementation->isAlive)
+	: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+	, IsRendering(implementation->isAlive)
 {
 	device = implementation->createDevice();
 	surface = implementation->createSurface();

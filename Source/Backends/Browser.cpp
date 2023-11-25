@@ -36,7 +36,7 @@ int main(int, const char **);
 
 KEEP_IN_MODULE void _async_main()
 {
-    main(0, nullptr);
+	main(0, nullptr);
 }*/
 
 using namespace std;
@@ -50,8 +50,8 @@ struct Backend::IBackend : public Window
 	bool isAlive = true;
 
 	IBackend(const char *windowTitle, int windowWidth, int windowHeight)
-	    : instance(CreateInstance())
-	    , Window(windowTitle, windowWidth, windowHeight)
+		: instance(CreateInstance())
+		, Window(windowTitle, windowWidth, windowHeight)
 	{
 		EM_ASM(
 	    {
@@ -102,8 +102,8 @@ struct Backend::IBackend : public Window
 };
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-    : implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
-    , IsRendering(implementation->isAlive)
+	: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+	, IsRendering(implementation->isAlive)
 {
 	device = implementation->createDevice();
 	surface = implementation->createSurface();
@@ -111,16 +111,16 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 	queue = device.GetQueue();
 
 	/*queue.OnSubmittedWorkDone(WGPUQueueWorkDoneStatus_Success, [](WGPUQueueWorkDoneStatus status, void* userData){
-	    cout << status << endl;
+		cout << status << endl;
 	},this);
 	*/
 	emscripten_async_call(
-	    [](void *userData) {
-		    auto _this = (Backend *)userData;
-		    _this->Start();
-	    },
-	    this,
-	    0
+		[](void *userData) {
+			auto _this = (Backend *)userData;
+			_this->Start();
+		},
+		this,
+		0
 	);
 }
 
@@ -145,23 +145,23 @@ Backend::~Backend()
 /*
 __attribute__((constructor)) void init()
 {
-    EM_ASM({
-        if (navigator["gpu"])
-        {
-            navigator["gpu"]["requestAdapter"]().then(
-                function(adapter) {
-                    adapter["requestDevice"]().then(function(device) {
-                        Module["preinitializedWebGPUDevice"] = device;
-                        __async_main();
-                    });
-                },
-                function() { console.error("No WebGPU adapter; not starting"); }
-            );
-        }
-        else
-        {
-            console.error("No support for WebGPU; not starting");
-        }
-    });
+	EM_ASM({
+		if (navigator["gpu"])
+		{
+			navigator["gpu"]["requestAdapter"]().then(
+				function(adapter) {
+					adapter["requestDevice"]().then(function(device) {
+						Module["preinitializedWebGPUDevice"] = device;
+						__async_main();
+					});
+				},
+				function() { console.error("No WebGPU adapter; not starting"); }
+			);
+		}
+		else
+		{
+			console.error("No support for WebGPU; not starting");
+		}
+	});
 }
 */

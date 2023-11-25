@@ -9,6 +9,7 @@
     "cmake.useCMakePresets": "always",
     "cmake.options.statusBarVisibility": "compact",
     "editor.formatOnSave": true,
+    "C_Cpp.formatting": "clangFormat",
     "files.associations": {
         "iostream": "cpp",
         "*.inc": "cpp",
@@ -168,7 +169,7 @@
         ".cache/**": true,
         "build/**": true,
         "**/.git": true,
-        "**/.github": true,
+        "**/.github": false,
         "**/.vscode": false,
         "**/.svn": true,
         "**/.hg": true,

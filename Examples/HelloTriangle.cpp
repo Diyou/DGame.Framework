@@ -49,8 +49,8 @@ class HelloTriangle : public Backend
 		Buffer buffer;
 
 		Uniform(const T &uniform, HelloTriangle *renderer)
-		    : value(uniform)
-		    , size(sizeof(uniform))
+			: value(uniform)
+			, size(sizeof(uniform))
 		{
 			this->renderer = renderer;
 
@@ -98,9 +98,9 @@ class HelloTriangle : public Backend
 		CommandBuffer commands = encoder.Finish(nullptr);
 
 		/*auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void * userData) {
-		    auto _this = reinterpret_cast<Renderer*>(userData);
-		    //_this->Start();
-		    std::cout << "Queued work finished with status: " << status << std::endl;
+			auto _this = reinterpret_cast<Renderer*>(userData);
+			//_this->Start();
+			std::cout << "Queued work finished with status: " << status << std::endl;
 		};
 		queue.OnSubmittedWorkDone(onQueueWorkDone, this);
 		*/
@@ -115,21 +115,21 @@ public:
 	Buffer vertexBuffer, indexBuffer;
 
 	HelloTriangle()
-	    : Backend("Dawn Example", 720, 480)
-	    , rotation(createUniform<float>(0))
+		: Backend("Dawn Example", 720, 480)
+		, rotation(createUniform<float>(0))
 	{
 		// Setup pipeline
 		Setup();
 
 		vertexBuffer = createBuffer(
-		    Vertices.data(),
-		    Vertices.size() * sizeof(decay<decltype(*Vertices.begin())>::type),
-		    BufferUsage::Vertex
+			Vertices.data(),
+			Vertices.size() * sizeof(decay<decltype(*Vertices.begin())>::type),
+			BufferUsage::Vertex
 		);
 		indexBuffer = createBuffer(
-		    Indices.data(),
-		    Indices.size() * sizeof(decay<decltype(*Indices.begin())>::type),
-		    BufferUsage::Index
+			Indices.data(),
+			Indices.size() * sizeof(decay<decltype(*Indices.begin())>::type),
+			BufferUsage::Index
 		);
 	}
 

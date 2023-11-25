@@ -1,8 +1,8 @@
 name: FormatCheck
 on: [push, pull_request]
 jobs:
- formatting-check:
-  name: Formatting Check
+ clang-format:
+  name: Clang-Format
   runs-on: ubuntu-latest
   steps:
    - uses: actions/checkout@v3
