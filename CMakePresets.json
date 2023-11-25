@@ -25,8 +25,8 @@
       "name": "Default",
       "hidden": true,
       "cacheVariables": {
-        "DAWN_BUILD_SAMPLES": "OFF",
-        "CMAKE_POLICY_DEFAULT_CMP0148":"OLD"
+        "CMAKE_POLICY_DEFAULT_CMP0148":"OLD",
+        "CMAKE_POLICY_DEFAULT_CMP0069":"NEW"
       },
       "environment": {
         "DEPOT_TOOLS_UPDATE": "0",
@@ -46,6 +46,7 @@
         "Default"
       ],
       "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON",
         "CMAKE_BUILD_TYPE": "Debug"
       },
       "displayName": "Debug Config",
@@ -59,6 +60,7 @@
         "Default"
       ],
       "cacheVariables": {
+        "BUILD_SHARED_LIBS": "OFF",
         "CMAKE_BUILD_TYPE": "Release"
       },
       "displayName": "Release Config",
@@ -92,7 +94,8 @@
       "name": "default",
       "hidden": true,
       "targets": [
-        "DGame.Framework"
+        "DGame.Framework",
+        "HelloTriangle"
       ]
     },
     {
@@ -122,18 +125,6 @@
         "default"
       ],
       "configurePreset": "Release.WASM"
-    }
-  ],
-  "testPresets": [
-    {
-      "name": "Unit Tests",
-      "configurePreset": "Debug",
-      "output": {
-        "outputOnFailure": true
-      },
-      "execution": {
-        "stopOnFailure": true
-      }
     }
   ]
 }

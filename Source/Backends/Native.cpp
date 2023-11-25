@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2023 Diyou
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include "DGame/Backend.h"
 
 #include "dawn/dawn_proc.h"
@@ -20,7 +42,8 @@ namespace DGame
 static vector<string> enableToggles;
 static vector<string> disableToggles;
 
-constexpr TextureFormat GetPreferredSwapChainTextureFormat()
+constexpr TextureFormat
+GetPreferredSwapChainTextureFormat()
 {
 	// TODO(https://bugs.chromium.org/p/dawn/issues/detail?id=1362):
 	// Return the adapter's preferred format when implemented.
@@ -29,7 +52,8 @@ constexpr TextureFormat GetPreferredSwapChainTextureFormat()
 
 constexpr wgpu::AdapterType adapterType = AdapterType::DiscreteGPU;
 
-void PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
+void
+PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
 {
 	const char *errorTypeName = "";
 	switch (errorType)
@@ -53,17 +77,20 @@ void PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
 	cerr << errorTypeName << " error: " << message;
 }
 
-void DeviceLostCallback(WGPUDeviceLostReason reason, const char *message, void *userData)
+void
+DeviceLostCallback(WGPUDeviceLostReason reason, const char *message, void *userData)
 {
 	cerr << "Device lost: " << message;
 }
 
-void PrintGLFWError(int code, const char *message)
+void
+PrintGLFWError(int code, const char *message)
 {
 	cerr << "GLFW error: " << code << " - " << message;
 }
 
-void DeviceLogCallback(WGPULoggingType type, const char *message, void *)
+void
+DeviceLogCallback(WGPULoggingType type, const char *message, void *)
 {
 	cerr << "Device log: " << message;
 }
@@ -96,7 +123,8 @@ struct Backend::IBackend : public Window
 		// procs.deviceSetLoggingCallback(device.Get(), DeviceLogCallback, nullptr);
 	}
 
-	native::Adapter requestAdapter()
+	native::Adapter
+	requestAdapter()
 	{
 		RequestAdapterOptions options{};
 		options.backendType = BackendType;
@@ -132,7 +160,8 @@ struct Backend::IBackend : public Window
 		return *adapter;
 	}
 
-	Device createDevice()
+	Device
+	createDevice()
 	{
 		vector<const char *> enableToggleNames;
 		vector<const char *> disabledToggleNames;
@@ -159,20 +188,22 @@ struct Backend::IBackend : public Window
 		return Device::Acquire(requestAdapter().CreateDevice(&deviceDesc));
 	}
 
-	Surface createSurface()
+	Surface
+	createSurface()
 	{
 		auto descriptor = createSurfaceDescriptor();
 		return Surface::Acquire(procs.instanceCreateSurface(instance->Get(), (WGPUSurfaceDescriptor *)&descriptor));
 	}
 
-	SwapChain createSwapChain(Device device, Surface surface)
+	SwapChain
+	createSwapChain(Device device, Surface surface)
 	{
-		// Create the swapchain
+		auto size = Size();
 		SwapChainDescriptor descriptor;
 		descriptor.usage = TextureUsage::RenderAttachment;
 		descriptor.format = GetPreferredSwapChainTextureFormat();
-		descriptor.width = width;
-		descriptor.height = height;
+		descriptor.width = size.width;
+		descriptor.height = size.height;
 		descriptor.presentMode = PresentMode::Fifo;
 
 		return SwapChain::Acquire(
@@ -180,7 +211,8 @@ struct Backend::IBackend : public Window
 		);
 	}
 
-	void iterate()
+	void
+	iterate()
 	{
 		native::InstanceProcessEvents(instance->Get());
 	}
@@ -198,19 +230,17 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 	device.SetDeviceLostCallback(DeviceLostCallback, this);
 }
 
-void Backend::Start()
+void
+Backend::Start()
 {
-	auto worker = std::async(std::launch::async, [&]() -> void {
-		while (IsRendering)
-		{
-			implementation->iterate();
+	while (IsRendering)
+	{
+		implementation->iterate();
 
-			// Render Frame
-			draw();
-			swapchain.Present();
-		}
-	});
-	worker.wait();
+		// Render Frame
+		draw();
+		swapchain.Present();
+	}
 }
 
 Backend::~Backend()

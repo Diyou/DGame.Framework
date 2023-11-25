@@ -1,5 +1,9 @@
 {
-    "editor.formatOnSave": false,
+    "licenser.author": "Diyou",
+    "licenser.license": "Custom",
+    "licenser.customHeaderFile": "${workspaceFolder}/LICENSE",
+    "licenser.disableAutoSave": false,
+    "editor.formatOnSave": true,
     "files.associations": {
         "iostream": "cpp",
         "*.inc": "cpp",
@@ -113,7 +117,8 @@
         "format": "cpp",
         "*.hpp11": "cpp",
         "*.def": "cpp",
-        "stdfloat": "cpp"
+        "stdfloat": "cpp",
+        "cassert": "cpp"
     },
     "C_Cpp.inlayHints.parameterNames.enabled": true,
     "git.ignoreLimitWarning": true,
@@ -153,7 +158,10 @@
         "**/*.code-search": true
     },
     "cmake.configureOnOpen": true,
-    "cmake.options.statusBarVisibility": "compact"
+    "cmake.options.statusBarVisibility": "compact",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "prettier.enable": false
     //.
     //"files.exclude": {
     //    ".cache/**": true,
