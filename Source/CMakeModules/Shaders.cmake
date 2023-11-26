@@ -26,7 +26,7 @@ foreach(wgsl_shader ${wgsl_shaders})
     NEWLINE_CONSUME
   )
 
-  message("Importing WGSL Shader: ${shader_file}")
+  message(STATUS "Shader(WGSL): Importing ${shader_file}.wgsl")
 
   set(wgsl_constexpr
       "static constexpr char ${shader_file}[] = R\"(\n${wgsl_shader_string}\n)\"\;\n"

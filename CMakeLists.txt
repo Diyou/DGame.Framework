@@ -8,6 +8,13 @@
 
 cmake_minimum_required(VERSION 3.24)
 
+option(BUILD_SHARED_LIBS "Link dynamically" ON)
+option(BUILD_WASM "Compile to WASM with Emscripten" OFF)
+option(ENABLE_IPO "If supported use Interprocedural Optimization" ON)
+
+set(CMAKE_POLICY_DEFAULT_CMP0148 "OLD") # PythonInterp
+set(CMAKE_POLICY_DEFAULT_CMP0069 "NEW") # IPO
+
 # Setup Environment first
 list(
   APPEND
@@ -21,9 +28,11 @@ find_package(Git REQUIRED)
 include(Emscripten) # Needs to be included before project()
 project(DGame.Framework)
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT IPOSupported OUTPUT error)
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${IPOSupported})
+if(${ENABLE_IPO})
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT IPOSupported OUTPUT error)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${IPOSupported})
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 17)
@@ -32,7 +41,7 @@ set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-if(${EMSCRIPTEN})
+if(${BUILD_WASM})
   set(CMAKE_EXECUTABLE_SUFFIX .html)
 
   # Run python3 -m http.server --directory ${CMAKE_BINARY_DIR}/dist
@@ -44,7 +53,7 @@ if(${EMSCRIPTEN})
     INTERFACE --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
   target_link_libraries(DGame.Framework PRIVATE DGame.EMSlib)
-else(${EMSCRIPTEN})
+else(${BUILD_WASM})
   include(Dawn)
   include(SDL2)
 
@@ -59,7 +68,7 @@ else(${EMSCRIPTEN})
            SDL2::SDL2
   )
 
-endif(${EMSCRIPTEN})
+endif(${BUILD_WASM})
 
 target_include_directories(DGame.Framework PUBLIC Header)
 

@@ -7,13 +7,8 @@
 # LICENSE file in the root directory of this source tree.
 
 # This file needs to be included before project()
-option(
-  USE_EMSCRIPTEN
-  "Use Emscripten toolchain"
-  OFF
-)
 
-if(${USE_EMSCRIPTEN})
+if(${BUILD_WASM})
 
   if(DEFINED ENV{EMSDK})
 
@@ -132,4 +127,4 @@ if(${USE_EMSCRIPTEN})
     " -D_DEFAULT_SOURCE=1"
   )
 
-endif(${USE_EMSCRIPTEN})
+endif(${BUILD_WASM})

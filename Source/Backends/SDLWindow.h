@@ -47,6 +47,7 @@ struct Window
 	 * @return DGame::Window pointer
 	 */
 	static Window *FromSDLWindow(SDL_Window *window);
+	static Window *FromSDLWindowID(Uint32 id);
 
 	void
 	onWindowEvent(SDL_WindowEvent &event)

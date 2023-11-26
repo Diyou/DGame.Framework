@@ -173,18 +173,14 @@ struct SDLRuntime
 					break;
 				}
 			case SDL_WINDOWEVENT:
-				break;
-				auto Window = Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID));
-				Window->onWindowEvent(Event.window);
+				Window::FromSDLWindowID(Event.window.windowID)->onWindowEvent(Event.window);
 				break;
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
-				auto Window = Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID));
-				Window->onMouseButtonEvent(Event.button);
+				Window::FromSDLWindowID(Event.window.windowID)->onMouseButtonEvent(Event.button);
 				break;
 			case SDL_MOUSEMOTION:
-				auto Window = Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID));
-				Window->onMouseMotionEvent(Event.motion);
+				Window::FromSDLWindowID(Event.window.windowID)->onMouseMotionEvent(Event.motion);
 				break;
 			}
 		}
@@ -233,6 +229,12 @@ Window *
 Window::FromSDLWindow(SDL_Window *window)
 {
 	return (Window *)SDL_GetWindowData(window, "DGame::Window");
+}
+
+Window *
+Window::FromSDLWindowID(Uint32 id)
+{
+	return FromSDLWindow(SDL_GetWindowFromID(id));
 }
 
 unique_ptr<ChainedStruct>
