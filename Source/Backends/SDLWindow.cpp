@@ -33,7 +33,6 @@ namespace DGame
 {
 struct SDLRuntime
 {
-
 	vector<BackendType> SupportedBackends;
 	vector<string> AvailableDrivers;
 	string Driver, PreferredDriver;
@@ -59,23 +58,23 @@ struct SDLRuntime
 		SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
 #if defined(__EMSCRIPTEN__)
-		SupportedBackends = { BackendType::WebGPU };
+		SupportedBackends = {BackendType::WebGPU};
 #elif defined(_WIN32)
-		SupportedBackends = { BackendType::D3D12, BackendType::D3D11, BackendType::Vulkan };
+		SupportedBackends = {BackendType::D3D12, BackendType::D3D11, BackendType::Vulkan};
 #elif defined(__APPLE__)
-		SupportedBackends = { BackendType::Metal };
+		SupportedBackends = {BackendType::Metal};
 #elif defined(__linux__)
-		SupportedBackends = { BackendType::Vulkan };
+		SupportedBackends = {BackendType::Vulkan};
 		PreferredDriver = "wayland";
 #endif
 
 		// Check supported Drivers
 		SDL_Init(0);
 
-		for (int i = 0; i < SDL_GetNumVideoDrivers(); i++)
+		for(int i = 0; i < SDL_GetNumVideoDrivers(); i++)
 		{
 			const char *driver = SDL_GetVideoDriver(i);
-			if (0 == SDL_VideoInit(driver))
+			if(0 == SDL_VideoInit(driver))
 			{
 				AvailableDrivers.push_back(driver);
 			}
@@ -83,7 +82,9 @@ struct SDLRuntime
 
 		auto SDL_VIDEODRIVER = getenv("SDL_VIDEODRIVER");
 		string requestedDriver = SDL_VIDEODRIVER ? SDL_VIDEODRIVER : "";
-		if (find(AvailableDrivers.begin(), AvailableDrivers.end(), requestedDriver) != AvailableDrivers.end()
+		if (
+			find(AvailableDrivers.begin(), AvailableDrivers.end(), requestedDriver)
+				!= AvailableDrivers.end()
 			&& SDL_VideoInit(requestedDriver.c_str()) == 0)
 		{
 			cout << "User asked for " << requestedDriver << '\n';
@@ -92,7 +93,7 @@ struct SDLRuntime
 		else
 		{
 			unsetenv("SDL_VIDEODRIVER");
-			if (PreferredDriver.empty() || SDL_VideoInit(PreferredDriver.c_str()) != 0)
+			if(PreferredDriver.empty() || SDL_VideoInit(PreferredDriver.c_str()) != 0)
 			{
 				SDL_VideoInit(NULL);
 			}
@@ -114,7 +115,8 @@ struct SDLRuntime
 
 		SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 #if defined(__EMSCRIPTEN__)
-		// emscripten_async_call([](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); }, this, 0);
+		// emscripten_async_call([](void *arg) { ((SDLRuntime
+		// *)arg)->ProcessEvents(); }, this, 0);
 
 		EM_ASM({
 			if (navigator["gpu"])
@@ -135,10 +137,15 @@ struct SDLRuntime
 			}
 		});
 
-		emscripten_set_main_loop_arg([](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); }, this, 1000, false);
+		emscripten_set_main_loop_arg(
+			[](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); },
+			this,
+			1000,
+			false
+		);
 #else
 		loop = async(launch::async, [this]() {
-			while (isRunning)
+			while(isRunning)
 			{
 				ProcessEvents();
 				this_thread::sleep_for(microseconds(PollingDelay));
@@ -151,30 +158,33 @@ struct SDLRuntime
 	ProcessEvents()
 	{
 		SDL_Event Event;
-		while (SDL_PollEvent(&Event))
+		while(SDL_PollEvent(&Event))
 		{
 			// see https://wiki.libsdl.org/SDL2/SDL_Event
-			switch (Event.type)
+			switch(Event.type)
 			{
 			case SDL_QUIT:
 				isRunning = false;
 				loop.wait();
 				break;
 			default:
-				if (SDL_GetWindowFromID(Event.window.windowID) == NULL)
+				if(SDL_GetWindowFromID(Event.window.windowID) == NULL)
 				{
 					break;
 				}
 			case SDL_WINDOWEVENT:
 				break;
-				Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID))->onWindowEvent(Event.window);
+				auto Window = Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID));
+				Window->onWindowEvent(Event.window);
 				break;
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
-				Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID))->onMouseButtonEvent(Event.button);
+				auto Window = Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID));
+				Window->onMouseButtonEvent(Event.button);
 				break;
 			case SDL_MOUSEMOTION:
-				Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID))->onMouseMotionEvent(Event.motion);
+				auto Window = Window::FromSDLWindow(SDL_GetWindowFromID(Event.window.windowID));
+				Window->onMouseMotionEvent(Event.motion);
 				break;
 			}
 		}
@@ -189,17 +199,20 @@ Window::Window(const char *title, int width, int height)
 {
 	BackendType = SDLRuntime::Instance->SupportedBackends[0];
 
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
-	if (window == NULL)
+	window
+		= SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
+	if(window == NULL)
 	{
 		cerr << SDL_GetError() << endl;
 		throw runtime_error("Could not create SDL Window");
 	}
 	SDL_SetWindowData(window, "DGame::Window", this);
 
-	/*
-	emscripten_async_call([](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); }, SDLRuntime::Instance.get(), 0);
-	*/
+	/*emscripten_async_call(
+		[](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); },
+		SDLRuntime::Instance.get(),
+		0
+	);*/
 }
 
 const char *
@@ -250,7 +263,7 @@ Window::createSurfaceDescriptor()
 	descriptor->layer = sysWMInfo.info.cocoa.window;
 	return std::move(descriptor);
 #elif defined(__linux__)
-	if (driver.compare("wayland") == 0)
+	if(driver.compare("wayland") == 0)
 	{
 		auto descriptor = make_unique<SurfaceDescriptorFromWaylandSurface>();
 		descriptor->surface = sysWMInfo.info.wl.surface;

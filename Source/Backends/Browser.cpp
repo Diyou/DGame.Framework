@@ -50,23 +50,19 @@ struct Backend::IBackend : public Window
 	bool isAlive = true;
 
 	IBackend(const char *windowTitle, int windowWidth, int windowHeight)
-		: instance(CreateInstance())
-		, Window(windowTitle, windowWidth, windowHeight)
+	: instance(CreateInstance())
+	, Window(windowTitle, windowWidth, windowHeight)
 	{
-		EM_ASM(
-	    {
-		    let canvas = document.querySelector("canvas#canvas");
-		    let original = canvas.cloneNode(true);
-		    original.style.position = "absolute";
-		    original.style.zIndex = -1;
-		    canvas.removeAttribute("style");
-		    canvas.id = `SDLWindow${$1}`;
-		    canvas.title = UTF8ToString($0);
-		    document.body.insertBefore(original, canvas);
-	    },
-	    Title(),
-	    SDL_GetWindowID(window)
-	);
+		EM_ASM({
+			let canvas = document.querySelector("canvas#canvas");
+			let original = canvas.cloneNode(true);
+			original.style.position = "absolute";
+			original.style.zIndex = -1;
+			canvas.removeAttribute("style");
+			canvas.id = `SDLWindow${$1}`;
+			canvas.title = UTF8ToString($0);
+			document.body.insertBefore(original, canvas);
+		}, Title(), SDL_GetWindowID(window));
 	}
 
 	Device
@@ -102,18 +98,20 @@ struct Backend::IBackend : public Window
 };
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-	: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
-	, IsRendering(implementation->isAlive)
+: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+, IsRendering(implementation->isAlive)
 {
 	device = implementation->createDevice();
 	surface = implementation->createSurface();
 	swapchain = implementation->createSwapChain(device, surface);
 	queue = device.GetQueue();
 
-	/*queue.OnSubmittedWorkDone(WGPUQueueWorkDoneStatus_Success, [](WGPUQueueWorkDoneStatus status, void* userData){
-		cout << status << endl;
-	},this);
-	*/
+	/*queue.OnSubmittedWorkDone(
+		WGPUQueueWorkDoneStatus_Success,
+		[](WGPUQueueWorkDoneStatus status, void *userData) { cout << status << endl; },
+		this
+	);*/
+
 	emscripten_async_call(
 		[](void *userData) {
 			auto _this = (Backend *)userData;
@@ -137,8 +135,7 @@ Backend::Start()
 }
 
 Backend::~Backend()
-{
-}
+{}
 
 } // namespace DGame
 

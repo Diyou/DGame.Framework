@@ -44,7 +44,7 @@ void
 PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
 {
 	const char *errorTypeName = "";
-	switch (errorType)
+	switch(errorType)
 	{
 	case WGPUErrorType_Validation:
 		errorTypeName = "Validation";
@@ -96,15 +96,13 @@ struct Backend::IBackend : public Window
 	 * @param windowHeight
 	 */
 	IBackend(const char *windowTitle, int windowWidth, int windowHeight)
-		: Window(windowTitle, windowWidth, windowHeight)
+	: Window(windowTitle, windowWidth, windowHeight)
 	{
-		{
-			// Create Instance
-			InstanceDescriptor descriptor{};
-			descriptor.features.timedWaitAnyEnable = true;
+		// Create Instance
+		InstanceDescriptor descriptor{};
+		descriptor.features.timedWaitAnyEnable = true;
 
-			instance = make_unique<dawn::native::Instance>((WGPUInstanceDescriptor *)&descriptor);
-		}
+		instance = make_unique<dawn::native::Instance>((WGPUInstanceDescriptor *)&descriptor);
 
 		// procs.deviceSetUncapturedErrorCallback(device.Get(), PrintDeviceError, nullptr);
 		// procs.deviceSetDeviceLostCallback(device.Get(), DeviceLostCallback, nullptr);
@@ -125,22 +123,22 @@ struct Backend::IBackend : public Window
 		// Find the first adapter which satisfies the adapterType requirement.
 		auto isAdapterType = [&adapterProperties](const auto &adapter) -> bool {
 			// picks the first adapter when adapterType is unknown.
-			if (adapterType == AdapterType::Unknown)
+			if(adapterType == AdapterType::Unknown)
 			{
 				return true;
 			}
 			adapter.GetProperties(&adapterProperties);
 			stringstream ss;
-			ss
-				//<<        "Type:"         << adapterProperties.adapterType
-				<< "\nGPU: " << adapterProperties.name << "\nDriver: " << adapterProperties.driverDescription;
+			ss //<< "Type:" << adapterProperties.adapterType
+				<< "\nGPU: " << adapterProperties.name
+				<< "\nDriver: " << adapterProperties.driverDescription;
 
 			cout << ss.str() << endl;
 			return adapterProperties.adapterType == adapterType;
 		};
 
 		auto adapter = find_if(adapters.begin(), adapters.end(), isAdapterType);
-		if (adapter == adapters.end())
+		if(adapter == adapters.end())
 		{
 			cerr << "Failed to find an adapter! Please try another adapter type." << endl;
 			return native::Adapter();
@@ -153,11 +151,11 @@ struct Backend::IBackend : public Window
 	{
 		vector<const char *> enableToggleNames;
 		vector<const char *> disabledToggleNames;
-		for (const string &toggle : enableToggles)
+		for(const string &toggle: enableToggles)
 		{
 			enableToggleNames.push_back(toggle.c_str());
 		}
-		for (const string &toggle : disableToggles)
+		for(const string &toggle: disableToggles)
 		{
 			disabledToggleNames.push_back(toggle.c_str());
 		}
@@ -180,7 +178,9 @@ struct Backend::IBackend : public Window
 	createSurface()
 	{
 		auto descriptor = createSurfaceDescriptor();
-		return Surface::Acquire(procs.instanceCreateSurface(instance->Get(), (WGPUSurfaceDescriptor *)&descriptor));
+		return Surface::Acquire(
+			procs.instanceCreateSurface(instance->Get(), (WGPUSurfaceDescriptor *)&descriptor)
+		);
 	}
 
 	SwapChain
@@ -194,9 +194,11 @@ struct Backend::IBackend : public Window
 		descriptor.height = size.height;
 		descriptor.presentMode = PresentMode::Fifo;
 
-		return SwapChain::Acquire(
-			procs.deviceCreateSwapChain(device.Get(), surface.Get(), (WGPUSwapChainDescriptor *)&descriptor)
-		);
+		return SwapChain::Acquire(procs.deviceCreateSwapChain(
+			device.Get(),
+			surface.Get(),
+			(WGPUSwapChainDescriptor *)&descriptor
+		));
 	}
 
 	void
@@ -207,8 +209,8 @@ struct Backend::IBackend : public Window
 };
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-	: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
-	, IsRendering(implementation->isAlive)
+: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+, IsRendering(implementation->isAlive)
 {
 	device = implementation->createDevice();
 	surface = implementation->createSurface();
@@ -221,7 +223,7 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 void
 Backend::Start()
 {
-	while (IsRendering)
+	while(IsRendering)
 	{
 		implementation->iterate();
 

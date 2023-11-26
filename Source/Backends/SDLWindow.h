@@ -51,7 +51,7 @@ struct Window
 	void
 	onWindowEvent(SDL_WindowEvent &event)
 	{
-		switch (event.event)
+		switch(event.event)
 		{
 		case SDL_WINDOWEVENT_MINIMIZED:
 			std::cout << "mini me" << std::endl;
@@ -66,7 +66,7 @@ struct Window
 	void
 	onMouseButtonEvent(SDL_MouseButtonEvent &event)
 	{
-		switch (event.type)
+		switch(event.type)
 		{
 		case SDL_MOUSEBUTTONDOWN:
 			std::cout << "ID:" << event.windowID << " button pressed" << std::endl;
