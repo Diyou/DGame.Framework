@@ -10,49 +10,48 @@
 
 <!DOCTYPE html>
 <html>
- <head>
-  <style>
-   html,
-   body {
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    height: 100%;
-    overflow: hidden;
-   }
+  <head>
+    <style>
+      html,
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        overflow: hidden;
+      }
 
-   canvas.SDLWindow {
-    position: relative;
-    height: 100%;
-    /* Avoid using borders on the canvas
+      canvas.SDLWindow {
+        position: relative;
+        height: 100%;
+        /* Avoid using borders on the canvas
     border: 1px dashed black;
     box-sizing: border-box;
     */
-    border: none;
-   }
+        border: none;
+      }
 
-   @media screen and (orientation: portrait) {
-    body {
-     transform: rotate(90deg);
-     transform-origin: bottom left;
-     position: absolute;
-     height: 100vw;
-     left: 0;
-     top: -100vw;
-     width: 100vh;
-    }
-   }
-  </style>
- </head>
+      @media screen and (orientation: portrait) {
+        body {
+          transform: rotate(90deg);
+          transform-origin: bottom left;
+          position: absolute;
+          height: 100vw;
+          left: 0;
+          top: -100vw;
+          width: 100vh;
+        }
+      }
+    </style>
+  </head>
 
- <body>
-  <!--This is the template canvas to be cloned after SDL_CreateWindow-->
-  <canvas
-   id="canvas"
-   class="SDLWindow"
-   tabindex="-1"
-   oncontextmenu="event.preventDefault()"
-  ></canvas>
-  {{{ SCRIPT }}}
- </body>
+  <body>
+    <!--This is the template canvas to be cloned after SDL_CreateWindow-->
+    <canvas
+      id="canvas"
+      class="SDLWindow"
+      tabindex="-1"
+      oncontextmenu="event.preventDefault()"></canvas>
+    {{{ SCRIPT }}}
+  </body>
 </html>
