@@ -28,7 +28,8 @@ class HelloTriangle : public Backend
   };
 
   // clang-format on
-  template <class T> struct Uniform
+  template <class T>
+  struct Uniform
   {
     T value;
     size_t size;
