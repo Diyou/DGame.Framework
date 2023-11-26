@@ -24,7 +24,7 @@ class HelloTriangle : public Backend
   };
   const vector<uint16_t> Indices = {
     0, 1, 2,//
-    0  		//
+    0       //
   };
 
   // clang-format on
