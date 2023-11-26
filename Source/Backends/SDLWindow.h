@@ -26,66 +26,66 @@ namespace DGame
  */
 struct Window
 {
-	struct Dimension
-	{
-		int width, height;
-	};
+  struct Dimension
+  {
+    int width, height;
+  };
 
-	SDL_Window *window;
+  SDL_Window *window;
 
-	bool isAlive = true;
+  bool isAlive = true;
 
-	wgpu::BackendType BackendType;
+  wgpu::BackendType BackendType;
 
-	Window(const char *title, int width, int height);
+  Window(const char *title, int width, int height);
 
-	const char *Title() const;
-	Dimension Size() const;
-	/**
-	 * @brief Retrieves the Window pointer from the associated SDL_Window pointer
-	 * @param window The SDL_Window pointer
-	 * @return DGame::Window pointer
-	 */
-	static Window *FromSDLWindow(SDL_Window *window);
-	static Window *FromSDLWindowID(Uint32 id);
+  const char *Title() const;
+  Dimension Size() const;
+  /**
+   * @brief Retrieves the Window pointer from the associated SDL_Window pointer
+   * @param window The SDL_Window pointer
+   * @return DGame::Window pointer
+   */
+  static Window *FromSDLWindow(SDL_Window *window);
+  static Window *FromSDLWindowID(Uint32 id);
 
-	void
-	onWindowEvent(SDL_WindowEvent &event)
-	{
-		switch(event.event)
-		{
-		case SDL_WINDOWEVENT_MINIMIZED:
-			std::cout << "mini me" << std::endl;
-			break;
-		case SDL_WINDOWEVENT_CLOSE:
-			std::cout << "I died" << std::endl;
-			isAlive = false;
-			break;
-		}
-	}
+  void
+  onWindowEvent(SDL_WindowEvent &event)
+  {
+    switch(event.event)
+    {
+    case SDL_WINDOWEVENT_MINIMIZED:
+      std::cout << "mini me" << std::endl;
+      break;
+    case SDL_WINDOWEVENT_CLOSE:
+      std::cout << "I died" << std::endl;
+      isAlive = false;
+      break;
+    }
+  }
 
-	void
-	onMouseButtonEvent(SDL_MouseButtonEvent &event)
-	{
-		switch(event.type)
-		{
-		case SDL_MOUSEBUTTONDOWN:
-			std::cout << "ID:" << event.windowID << " button pressed" << std::endl;
-			break;
-		case SDL_MOUSEBUTTONUP:
-			std::cout << "button released" << std::endl;
-			break;
-		}
-	}
+  void
+  onMouseButtonEvent(SDL_MouseButtonEvent &event)
+  {
+    switch(event.type)
+    {
+    case SDL_MOUSEBUTTONDOWN:
+      std::cout << "ID:" << event.windowID << " button pressed" << std::endl;
+      break;
+    case SDL_MOUSEBUTTONUP:
+      std::cout << "button released" << std::endl;
+      break;
+    }
+  }
 
-	void
-	onMouseMotionEvent(SDL_MouseMotionEvent &event)
-	{
-		std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
-	}
+  void
+  onMouseMotionEvent(SDL_MouseMotionEvent &event)
+  {
+    std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
+  }
 
-	std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
+  std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
 
-	virtual ~Window();
+  virtual ~Window();
 };
 } // namespace DGame

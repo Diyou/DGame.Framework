@@ -24,32 +24,32 @@ namespace DGame
 
 class Backend
 {
-	struct IBackend;
-	std::unique_ptr<IBackend> implementation;
+  struct IBackend;
+  std::unique_ptr<IBackend> implementation;
 
-	bool &IsRendering;
+  bool &IsRendering;
 
 protected:
-	wgpu::Device device;
-	wgpu::Surface surface;
-	wgpu::SwapChain swapchain;
-	wgpu::Queue queue;
-	virtual void draw() = 0;
+  wgpu::Device device;
+  wgpu::Surface surface;
+  wgpu::SwapChain swapchain;
+  wgpu::Queue queue;
+  virtual void draw() = 0;
 
 public:
-	/** @fn void Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-	 *  @brief Creates a DAWN rendering context.
-	 *  @param windowTitle:		The window title.
-	 *  @param windowWidth: 	The window width.
-	 *  @param windowHeight:	The window height.
-	 */
-	Backend(const char *windowTitle, int windowWidth, int windowHeight);
+  /** @fn void Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
+   *  @brief Creates a DAWN rendering context.
+   *  @param windowTitle:		The window title.
+   *  @param windowWidth: 	The window width.
+   *  @param windowHeight:	The window height.
+   */
+  Backend(const char *windowTitle, int windowWidth, int windowHeight);
 
-	/** @fn void Backend::Start()
-	 *  @brief Start Rendering
-	 */
-	void Start();
+  /** @fn void Backend::Start()
+   *  @brief Start Rendering
+   */
+  void Start();
 
-	virtual ~Backend();
+  virtual ~Backend();
 };
 } // namespace DGame

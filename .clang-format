@@ -7,7 +7,7 @@ ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 2
 LineEnding: LF
 InsertNewlineAtEOF: true
-UseTab: Always
+UseTab: Never
 AccessModifierOffset: -2
 AlignAfterOpenBracket: BlockIndent
 AlignArrayOfStructures: Right
@@ -37,7 +37,7 @@ AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: AllDefinitions
 AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: MultiLine
+AlwaysBreakTemplateDeclarations: Yes
 AttributeMacros:
   - __capability
 BinPackArguments: false
@@ -142,7 +142,7 @@ PenaltyIndentedWhitespace: 0
 PointerAlignment: Right
 PPIndentWidth: -1
 ReferenceAlignment: Pointer
-ReflowComments: false
+ReflowComments: true
 RemoveBracesLLVM: false
 SeparateDefinitionBlocks: Always
 ShortNamespaceLines: 1

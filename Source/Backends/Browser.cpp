@@ -11,7 +11,7 @@
 int
 main()
 {
-	return 0;
+  return 0;
 }
 
 #include "DGame/Backend.h"
@@ -36,7 +36,7 @@ int main(int, const char **);
 
 KEEP_IN_MODULE void _async_main()
 {
-	main(0, nullptr);
+  main(0, nullptr);
 }*/
 
 using namespace std;
@@ -46,92 +46,96 @@ namespace DGame
 {
 struct Backend::IBackend : public Window
 {
-	Instance instance;
-	bool isAlive = true;
+  Instance instance;
+  bool isAlive = true;
 
-	IBackend(const char *windowTitle, int windowWidth, int windowHeight)
-	: instance(CreateInstance())
-	, Window(windowTitle, windowWidth, windowHeight)
-	{
-		EM_ASM({
-			let canvas = document.querySelector("canvas#canvas");
-			let original = canvas.cloneNode(true);
-			original.style.position = "absolute";
-			original.style.zIndex = -1;
-			canvas.removeAttribute("style");
-			canvas.id = `SDLWindow${$1}`;
-			canvas.title = UTF8ToString($0);
-			document.body.insertBefore(original, canvas);
-		}, Title(), SDL_GetWindowID(window));
-	}
+  IBackend(const char *windowTitle, int windowWidth, int windowHeight)
+  : instance(CreateInstance())
+  , Window(windowTitle, windowWidth, windowHeight)
+  {
+    EM_ASM(
+      {
+        let canvas = document.querySelector("canvas#canvas");
+        let original = canvas.cloneNode(true);
+        original.style.position = "absolute";
+        original.style.zIndex = -1;
+        canvas.removeAttribute("style");
+        canvas.id = `SDLWindow${$1}`;
+        canvas.title = UTF8ToString($0);
+        document.body.insertBefore(original, canvas);
+      },
+      Title(),
+      SDL_GetWindowID(window)
+    );
+  }
 
-	Device
-	createDevice()
-	{
-		return Device::Acquire(emscripten_webgpu_get_device());
-	}
+  Device
+  createDevice()
+  {
+    return Device::Acquire(emscripten_webgpu_get_device());
+  }
 
-	Surface
-	createSurface()
-	{
-		auto canvas = createSurfaceDescriptor();
+  Surface
+  createSurface()
+  {
+    auto canvas = createSurfaceDescriptor();
 
-		SurfaceDescriptor descriptor{};
-		descriptor.nextInChain = canvas.get();
+    SurfaceDescriptor descriptor{};
+    descriptor.nextInChain = canvas.get();
 
-		return instance.CreateSurface(&descriptor);
-	}
+    return instance.CreateSurface(&descriptor);
+  }
 
-	SwapChain
-	createSwapChain(Device device, Surface surface)
-	{
-		auto size = Size();
-		SwapChainDescriptor descriptor;
-		descriptor.usage = TextureUsage::RenderAttachment;
-		descriptor.format = TextureFormat::BGRA8Unorm;
-		descriptor.width = size.width;
-		descriptor.height = size.height;
-		descriptor.presentMode = PresentMode::Fifo;
+  SwapChain
+  createSwapChain(Device device, Surface surface)
+  {
+    auto size = Size();
+    SwapChainDescriptor descriptor;
+    descriptor.usage = TextureUsage::RenderAttachment;
+    descriptor.format = TextureFormat::BGRA8Unorm;
+    descriptor.width = size.width;
+    descriptor.height = size.height;
+    descriptor.presentMode = PresentMode::Fifo;
 
-		return device.CreateSwapChain(surface, &descriptor);
-	}
+    return device.CreateSwapChain(surface, &descriptor);
+  }
 };
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 : implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
 , IsRendering(implementation->isAlive)
 {
-	device = implementation->createDevice();
-	surface = implementation->createSurface();
-	swapchain = implementation->createSwapChain(device, surface);
-	queue = device.GetQueue();
+  device = implementation->createDevice();
+  surface = implementation->createSurface();
+  swapchain = implementation->createSwapChain(device, surface);
+  queue = device.GetQueue();
 
-	/*queue.OnSubmittedWorkDone(
-		WGPUQueueWorkDoneStatus_Success,
-		[](WGPUQueueWorkDoneStatus status, void *userData) { cout << status << endl; },
-		this
-	);*/
+  /*queue.OnSubmittedWorkDone(
+    WGPUQueueWorkDoneStatus_Success,
+    [](WGPUQueueWorkDoneStatus status, void *userData) { cout << status << endl; },
+    this
+  );*/
 
-	emscripten_async_call(
-		[](void *userData) {
-			auto _this = (Backend *)userData;
-			_this->Start();
-		},
-		this,
-		0
-	);
+  emscripten_async_call(
+    [](void *userData) {
+      auto _this = (Backend *)userData;
+      _this->Start();
+    },
+    this,
+    0
+  );
 }
 
 void
 Backend::Start()
 {
-	auto cb = [](double time, void *userData) -> EM_BOOL {
-		auto _this = (Backend *)userData;
-		_this->draw();
-		_this->Start();
-		return _this->IsRendering;
-	};
-	emscripten_request_animation_frame(cb, this);
+  auto cb = [](double time, void *userData) -> EM_BOOL {
+    auto _this = (Backend *)userData;
+    _this->draw();
+    _this->Start();
+    return _this->IsRendering;
+  };
+  emscripten_request_animation_frame(cb, this);
 }
 
 Backend::~Backend()
@@ -142,23 +146,23 @@ Backend::~Backend()
 /*
 __attribute__((constructor)) void init()
 {
-	EM_ASM({
-		if (navigator["gpu"])
-		{
-			navigator["gpu"]["requestAdapter"]().then(
-				function(adapter) {
-					adapter["requestDevice"]().then(function(device) {
-						Module["preinitializedWebGPUDevice"] = device;
-						__async_main();
-					});
-				},
-				function() { console.error("No WebGPU adapter; not starting"); }
-			);
-		}
-		else
-		{
-			console.error("No support for WebGPU; not starting");
-		}
-	});
+  EM_ASM({
+    if (navigator["gpu"])
+    {
+      navigator["gpu"]["requestAdapter"]().then(
+        function(adapter) {
+          adapter["requestDevice"]().then(function(device) {
+            Module["preinitializedWebGPUDevice"] = device;
+            __async_main();
+          });
+        },
+        function() { console.error("No WebGPU adapter; not starting"); }
+      );
+    }
+    else
+    {
+      console.error("No support for WebGPU; not starting");
+    }
+  });
 }
 */
