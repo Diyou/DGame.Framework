@@ -106,9 +106,6 @@ struct SDLRuntime
 
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 #if defined(__EMSCRIPTEN__)
-    // emscripten_async_call([](void *arg) { ((SDLRuntime
-    // *)arg)->ProcessEvents(); }, this, 0);
-
     EM_ASM({
       if(navigator["gpu"])
       {
@@ -116,7 +113,7 @@ struct SDLRuntime
           function(adapter) {
             adapter["requestDevice"]().then(function(device) {
               Module["preinitializedWebGPUDevice"] = device;
-              __main(0, "");
+              _main(0, "");
             });
           },
           function() { console.error("No WebGPU adapter; not starting"); }
@@ -127,13 +124,6 @@ struct SDLRuntime
         console.error("No support for WebGPU; not starting");
       }
     });
-
-    emscripten_set_main_loop_arg(
-      [](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); },
-      this,
-      1000,
-      false
-    );
 #else
     thread([this]() {
       while(isRunning)
@@ -187,7 +177,16 @@ SDLRuntime *SDLRuntime::Instance = new SDLRuntime();
 
 RunTimeExit::operator int()
 {
+#if defined(__EMSCRIPTEN__)
+  while(SDLRuntime::Instance->isRunning)
+  {
+    SDLRuntime::Instance->ProcessEvents();
+    emscripten_sleep(0);
+  }
+  return EXIT_SUCCESS;
+#else
   return SDLRuntime::Instance->Exit.get_future().get();
+#endif
 };
 
 Window::Window(const char *title, int width, int height)
@@ -208,12 +207,6 @@ Window::Window(const char *title, int width, int height)
     throw runtime_error("Could not create SDL Window");
   }
   SDL_SetWindowData(window, "&", this);
-
-  /*emscripten_async_call(
-    [](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); },
-    SDLRuntime::Instance.get(),
-    0
-  );*/
 }
 
 const char *

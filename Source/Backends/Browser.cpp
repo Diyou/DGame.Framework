@@ -10,32 +10,15 @@
 
 #ifdef __EMSCRIPTEN__
 
-int
-main()
-{
-  return 0;
-}
-
 #include "DGame/Backend.h"
 #include "SDLWindow.h"
+#if defined(__EMSCRIPTEN_PTHREADS__)
+#include <thread>
+#endif
 
-#include <cassert>
 #include <emscripten.h>
-#include <emscripten/em_js.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
-#include <future>
-
-/*
-#ifndef KEEP_IN_MODULE
-#define KEEP_IN_MODULE extern "C" __attribute__((used, visibility("default")))
-#endif
-int main(int, const char **);
-
-KEEP_IN_MODULE void _async_main()
-{
-  main(0, nullptr);
-}*/
 
 using namespace std;
 using namespace wgpu;
@@ -114,20 +97,19 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
     },
     this
   );*/
-
-  emscripten_async_call(
-    [](void *userData) {
-      auto _this = (Backend *)userData;
-      _this->Start();
-    },
-    this,
-    0
-  );
 }
 
 void
 Backend::Start()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
+  thread([this]() {
+    while(IsRendering)
+    {
+      draw();
+    }
+  }).detach();
+#else
   auto cb = [](double time, void *userData) -> EM_BOOL {
     auto _this = (Backend *)userData;
     _this->draw();
@@ -135,6 +117,7 @@ Backend::Start()
     return _this->IsRendering;
   };
   emscripten_request_animation_frame(cb, this);
+#endif
   SDL_ShowWindow(implementation->window);
 }
 

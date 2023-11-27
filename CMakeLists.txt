@@ -28,7 +28,7 @@ find_package(Git REQUIRED)
 include(Emscripten) # Needs to be included before project()
 project(DGame.Framework)
 
-if(${ENABLE_IPO})
+if(${ENABLE_IPO} AND NOT ${BUILD_WASM})
   include(CheckIPOSupported)
   check_ipo_supported(RESULT IPOSupported OUTPUT error)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${IPOSupported})
