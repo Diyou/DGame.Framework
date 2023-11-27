@@ -8,15 +8,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "DGame/Backend.h"
+#ifndef __EMSCRIPTEN__
 
+#include "DGame/Backend.h"
+#include "SDLWindow.h"
 #include "dawn/dawn_proc.h"
 #include "dawn/native/DawnNative.h"
 
-#include "SDLWindow.h"
-
-#include <future>
-#include <iostream>
 #include <sstream>
 #include <thread>
 
@@ -25,8 +23,7 @@ using namespace chrono;
 using namespace wgpu;
 using namespace dawn;
 
-namespace DGame
-{
+namespace DGame {
 static vector<string> enableToggles;
 static vector<string> disableToggles;
 
@@ -66,7 +63,11 @@ PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
 }
 
 void
-DeviceLostCallback(WGPUDeviceLostReason reason, const char *message, void *userData)
+DeviceLostCallback(
+  WGPUDeviceLostReason reason,
+  const char *message,
+  void *userData
+)
 {
   cerr << "Device lost: " << message;
 }
@@ -102,10 +103,13 @@ struct Backend::IBackend : public Window
     InstanceDescriptor descriptor{};
     descriptor.features.timedWaitAnyEnable = true;
 
-    instance = make_unique<dawn::native::Instance>((WGPUInstanceDescriptor *)&descriptor);
+    instance = make_unique<dawn::native::Instance>(
+      (WGPUInstanceDescriptor *)&descriptor
+    );
 
-    // procs.deviceSetUncapturedErrorCallback(device.Get(), PrintDeviceError, nullptr);
-    // procs.deviceSetDeviceLostCallback(device.Get(), DeviceLostCallback, nullptr);
+    // procs.deviceSetUncapturedErrorCallback(device.Get(), PrintDeviceError,
+    // nullptr); procs.deviceSetDeviceLostCallback(device.Get(),
+    // DeviceLostCallback, nullptr);
     // procs.deviceSetLoggingCallback(device.Get(), DeviceLogCallback, nullptr);
   }
 
@@ -140,7 +144,8 @@ struct Backend::IBackend : public Window
     auto adapter = find_if(adapters.begin(), adapters.end(), isAdapterType);
     if(adapter == adapters.end())
     {
-      cerr << "Failed to find an adapter! Please try another adapter type." << endl;
+      cerr << "Failed to find an adapter! Please try another adapter type."
+           << endl;
       return native::Adapter();
     }
     return *adapter;
@@ -178,9 +183,10 @@ struct Backend::IBackend : public Window
   createSurface()
   {
     auto descriptor = createSurfaceDescriptor();
-    return Surface::Acquire(
-      procs.instanceCreateSurface(instance->Get(), (WGPUSurfaceDescriptor *)&descriptor)
-    );
+    return Surface::Acquire(procs.instanceCreateSurface(
+      instance->Get(),
+      (WGPUSurfaceDescriptor *)&descriptor
+    ));
   }
 
   SwapChain
@@ -223,14 +229,18 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 void
 Backend::Start()
 {
-  while(IsRendering)
-  {
-    implementation->iterate();
+  auto start = std::thread([this]() {
+    while(IsRendering)
+    {
+      implementation->iterate();
 
-    // Render Frame
-    draw();
-    swapchain.Present();
-  }
+      // Render Frame
+      draw();
+      swapchain.Present();
+    }
+  });
+  start.detach();
+  SDL_ShowWindow(implementation->window);
 }
 
 Backend::~Backend()
@@ -239,3 +249,4 @@ Backend::~Backend()
 }
 
 } // namespace DGame
+#endif

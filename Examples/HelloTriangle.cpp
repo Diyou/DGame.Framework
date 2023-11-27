@@ -28,22 +28,18 @@ class HelloTriangle : public Backend
   };
 
   // clang-format on
-  template <class T>
+  template<class T>
   struct Uniform
   {
     T value;
     size_t size;
-    HelloTriangle *renderer;
     Buffer buffer;
 
     Uniform(const T &uniform, HelloTriangle *renderer)
     : value(uniform)
     , size(sizeof(uniform))
-    {
-      this->renderer = renderer;
-
-      buffer = renderer->createBuffer(&value, size, BufferUsage::Uniform);
-    }
+    , buffer(renderer->createBuffer(&value, size, BufferUsage::Uniform))
+    {}
   };
 
   void
@@ -85,8 +81,8 @@ class HelloTriangle : public Backend
 
     CommandBuffer commands = encoder.Finish(nullptr);
 
-    /*auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void * userData) {
-      auto _this = reinterpret_cast<Renderer*>(userData);
+    /*auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void * userData)
+    { auto _this = reinterpret_cast<Renderer*>(userData);
       //_this->Start();
       std::cout << "Queued work finished with status: " << status << std::endl;
     };
@@ -119,6 +115,9 @@ public:
       Indices.size() * sizeof(decay<decltype(*Indices.begin())>::type),
       BufferUsage::Index
     );
+
+    // Start rendering
+    Start();
   }
 
   void
@@ -138,7 +137,8 @@ public:
     BindGroupLayoutDescriptor bglDescriptor{};
     bglDescriptor.entryCount = 1;
     bglDescriptor.entries = &bglEntry;
-    BindGroupLayout bindGroupLayout = device.CreateBindGroupLayout(&bglDescriptor);
+    BindGroupLayout bindGroupLayout
+      = device.CreateBindGroupLayout(&bglDescriptor);
 
     PipelineLayoutDescriptor plDescriptor{};
     plDescriptor.bindGroupLayoutCount = 1;
@@ -240,7 +240,7 @@ public:
     return buffer;
   }
 
-  template <class T>
+  template<class T>
   Uniform<T>
   createUniform(T value)
   {
@@ -249,12 +249,14 @@ public:
   }
 };
 
+//! [Example Main]
 int
 main(int argc, const char *argv[])
 {
-  // Runtime _(argc, argv);
-  auto triangle = new HelloTriangle();
-  auto triangle2 = new HelloTriangle();
+  HelloTriangle triangle;
+  HelloTriangle triangle2;
 
-  return 0;
+  return DGame::Return;
 }
+
+//! [Example Main]

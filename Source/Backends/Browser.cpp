@@ -8,6 +8,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#ifdef __EMSCRIPTEN__
+
 int
 main()
 {
@@ -15,18 +17,14 @@ main()
 }
 
 #include "DGame/Backend.h"
+#include "SDLWindow.h"
 
+#include <cassert>
 #include <emscripten.h>
 #include <emscripten/em_js.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
-
-#include "SDLWindow.h"
-
-#include <cassert>
-#include <functional>
 #include <future>
-#include <iostream>
 
 /*
 #ifndef KEEP_IN_MODULE
@@ -42,8 +40,7 @@ KEEP_IN_MODULE void _async_main()
 using namespace std;
 using namespace wgpu;
 
-namespace DGame
-{
+namespace DGame {
 struct Backend::IBackend : public Window
 {
   Instance instance;
@@ -112,7 +109,9 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 
   /*queue.OnSubmittedWorkDone(
     WGPUQueueWorkDoneStatus_Success,
-    [](WGPUQueueWorkDoneStatus status, void *userData) { cout << status << endl; },
+    [](WGPUQueueWorkDoneStatus status, void *userData) {
+      cout << status << endl;
+    },
     this
   );*/
 
@@ -136,6 +135,7 @@ Backend::Start()
     return _this->IsRendering;
   };
   emscripten_request_animation_frame(cb, this);
+  SDL_ShowWindow(implementation->window);
 }
 
 Backend::~Backend()
@@ -166,3 +166,4 @@ __attribute__((constructor)) void init()
   });
 }
 */
+#endif

@@ -6,6 +6,7 @@ IndentWidth: 2
 ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 2
 LineEnding: LF
+KeepEmptyLinesAtEOF: false
 InsertNewlineAtEOF: true
 UseTab: Never
 AccessModifierOffset: -2
@@ -48,7 +49,7 @@ BraceWrapping:
   AfterControlStatement: Always
   AfterEnum: true
   AfterFunction: true
-  AfterNamespace: true
+  AfterNamespace: false
   AfterObjCDeclaration: true
   AfterStruct: true
   AfterUnion: false
@@ -71,7 +72,7 @@ BreakConstructorInitializers: BeforeComma
 BreakAfterJavaFieldAnnotations: false
 BreakAfterAttributes: Always
 BreakStringLiterals: true
-ColumnLimit: 100
+ColumnLimit: 80
 CommentPragmas: '^ IWYU pragma:'
 QualifierAlignment: Left
 CompactNamespaces: false
@@ -90,7 +91,7 @@ ForEachMacros:
   - BOOST_FOREACH
 IfMacros:
   - KJ_IF_MAYBE
-IncludeBlocks: Preserve
+IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
     Priority: 2
@@ -151,7 +152,7 @@ SortJavaStaticImport: Before
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
-SpaceAfterTemplateKeyword: true
+SpaceAfterTemplateKeyword: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false

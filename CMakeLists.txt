@@ -82,6 +82,8 @@ target_precompile_headers(
   DGame.Framework
   PUBLIC ${WGSL_INTERMEDIATE_HEADER}
          <cstdlib>
+         <memory>
+         <iostream>
          <string>
 )
 

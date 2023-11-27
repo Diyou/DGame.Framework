@@ -12,32 +12,22 @@
 
 #include "webgpu/webgpu_cpp.h"
 
-#ifdef __EMSCRIPTEN__
-// Hookup async initiation
-#define main __main__
-#endif
+namespace DGame {
 
-#include <memory>
-
-namespace DGame
+struct RunTimeExit
 {
+  operator int();
+};
 
-class Backend
+/**
+ * @brief Used to hold the Runtime before returning from the main function
+ * @snippet Examples/HelloTriangle.cpp  Example Main
+ */
+static RunTimeExit Return{};
+
+struct Backend
 {
-  struct IBackend;
-  std::unique_ptr<IBackend> implementation;
-
-  bool &IsRendering;
-
-protected:
-  wgpu::Device device;
-  wgpu::Surface surface;
-  wgpu::SwapChain swapchain;
-  wgpu::Queue queue;
-  virtual void draw() = 0;
-
-public:
-  /** @fn void Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
+  /**
    *  @brief Creates a DAWN rendering context.
    *  @param windowTitle:		The window title.
    *  @param windowWidth: 	The window width.
@@ -51,5 +41,18 @@ public:
   void Start();
 
   virtual ~Backend();
+
+protected:
+  wgpu::Device device;
+  wgpu::Surface surface;
+  wgpu::SwapChain swapchain;
+  wgpu::Queue queue;
+  virtual void draw() = 0;
+
+private:
+  struct IBackend;
+  std::unique_ptr<IBackend> implementation;
+
+  bool &IsRendering;
 };
 } // namespace DGame

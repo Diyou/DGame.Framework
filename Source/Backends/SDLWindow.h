@@ -10,16 +10,11 @@
 
 #pragma once
 
-#include "webgpu/webgpu_cpp.h"
+#include "DGame/Backend.h"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
-#include <iostream>
-#include <memory>
-#include <string>
-
-namespace DGame
-{
+namespace DGame {
 /**
  * @note On Linux set environment variable SDL_VIDEODRIVER=x11
  *       to overwrite the preferred driver wayland
@@ -47,19 +42,22 @@ struct Window
    * @return DGame::Window pointer
    */
   static Window *FromSDLWindow(SDL_Window *window);
-  static Window *FromSDLWindowID(Uint32 id);
+  static Window *FromSDLWindowID(Uint32 &id);
 
   void
   onWindowEvent(SDL_WindowEvent &event)
   {
     switch(event.event)
     {
+    case SDL_WINDOWEVENT_SHOWN:
+      break;
     case SDL_WINDOWEVENT_MINIMIZED:
       std::cout << "mini me" << std::endl;
       break;
     case SDL_WINDOWEVENT_CLOSE:
       std::cout << "I died" << std::endl;
       isAlive = false;
+      SDL_DestroyWindow(window);
       break;
     }
   }

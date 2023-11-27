@@ -11,9 +11,7 @@
 #include "SDLWindow.h"
 
 #include <SDL_syswm.h>
-
 #include <future>
-#include <iostream>
 #include <sstream>
 #include <thread>
 
@@ -29,8 +27,7 @@ _main(int argc, const char *argv[])
   return __main__(argc, argv);
 }
 
-namespace DGame
-{
+namespace DGame {
 struct SDLRuntime
 {
   vector<BackendType> SupportedBackends;
@@ -51,6 +48,7 @@ struct SDLRuntime
     SDL_Quit();
   }
 
+  promise<int> Exit;
   future<void> loop;
 
   explicit SDLRuntime()
@@ -60,7 +58,8 @@ struct SDLRuntime
 #if defined(__EMSCRIPTEN__)
     SupportedBackends = {BackendType::WebGPU};
 #elif defined(_WIN32)
-    SupportedBackends = {BackendType::D3D12, BackendType::D3D11, BackendType::Vulkan};
+    SupportedBackends
+      = {BackendType::D3D12, BackendType::D3D11, BackendType::Vulkan};
 #elif defined(__APPLE__)
     SupportedBackends = {BackendType::Metal};
 #elif defined(__linux__)
@@ -83,7 +82,8 @@ struct SDLRuntime
     auto SDL_VIDEODRIVER = getenv("SDL_VIDEODRIVER");
     string requestedDriver = SDL_VIDEODRIVER ? SDL_VIDEODRIVER : "";
 
-    auto foundDriver = find(AvailableDrivers.begin(), AvailableDrivers.end(), requestedDriver);
+    auto foundDriver
+      = find(AvailableDrivers.begin(), AvailableDrivers.end(), requestedDriver);
     if(foundDriver != AvailableDrivers.end() && SDL_VideoInit(requestedDriver.c_str()) == 0)
     {
       cout << "User asked for " << requestedDriver << '\n';
@@ -110,7 +110,8 @@ struct SDLRuntime
         separator = ",";
       }
     );
-    cout << "Usable Driver(" << driverOutput.str() << ")\nInitiated with: " << Driver << endl;
+    cout << "Usable Driver(" << driverOutput.str()
+         << ")\nInitiated with: " << Driver << endl;
 
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 #if defined(__EMSCRIPTEN__)
@@ -149,6 +150,7 @@ struct SDLRuntime
         ProcessEvents();
         this_thread::sleep_for(microseconds(PollingDelay));
       }
+      Exit.set_value(EXIT_SUCCESS);
     });
 #endif
   }
@@ -162,24 +164,26 @@ struct SDLRuntime
       // see https://wiki.libsdl.org/SDL2/SDL_Event
       switch(Event.type)
       {
-      case SDL_QUIT:
-        isRunning = false;
-        loop.wait();
-        break;
       default:
         if(SDL_GetWindowFromID(Event.window.windowID) == NULL)
         {
           break;
         }
       case SDL_WINDOWEVENT:
-        Window::FromSDLWindowID(Event.window.windowID)->onWindowEvent(Event.window);
+        Window::FromSDLWindowID(Event.window.windowID)
+          ->onWindowEvent(Event.window);
         break;
       case SDL_MOUSEBUTTONUP:
       case SDL_MOUSEBUTTONDOWN:
-        Window::FromSDLWindowID(Event.window.windowID)->onMouseButtonEvent(Event.button);
+        Window::FromSDLWindowID(Event.window.windowID)
+          ->onMouseButtonEvent(Event.button);
         break;
       case SDL_MOUSEMOTION:
-        Window::FromSDLWindowID(Event.window.windowID)->onMouseMotionEvent(Event.motion);
+        Window::FromSDLWindowID(Event.window.windowID)
+          ->onMouseMotionEvent(Event.motion);
+        break;
+      case SDL_QUIT:
+        isRunning = false;
         break;
       }
     }
@@ -190,18 +194,29 @@ struct SDLRuntime
 
 SDLRuntime *SDLRuntime::Instance = new SDLRuntime();
 
+RunTimeExit::operator int()
+{
+  return SDLRuntime::Instance->Exit.get_future().get();
+};
+
 Window::Window(const char *title, int width, int height)
 {
   BackendType = SDLRuntime::Instance->SupportedBackends[0];
 
-  window
-    = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
+  window = SDL_CreateWindow(
+    title,
+    SDL_WINDOWPOS_UNDEFINED,
+    SDL_WINDOWPOS_UNDEFINED,
+    width,
+    height,
+    SDL_WINDOW_HIDDEN
+  );
   if(window == NULL)
   {
     cerr << SDL_GetError() << endl;
     throw runtime_error("Could not create SDL Window");
   }
-  SDL_SetWindowData(window, "DGame::Window", this);
+  SDL_SetWindowData(window, "&", this);
 
   /*emscripten_async_call(
     [](void *arg) { ((SDLRuntime *)arg)->ProcessEvents(); },
@@ -227,11 +242,11 @@ Window::Size() const
 Window *
 Window::FromSDLWindow(SDL_Window *window)
 {
-  return (Window *)SDL_GetWindowData(window, "DGame::Window");
+  return (Window *)SDL_GetWindowData(window, "&");
 }
 
 Window *
-Window::FromSDLWindowID(Uint32 id)
+Window::FromSDLWindowID(Uint32 &id)
 {
   return FromSDLWindow(SDL_GetWindowFromID(id));
 }
