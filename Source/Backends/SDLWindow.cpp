@@ -19,14 +19,6 @@ using namespace std;
 using namespace chrono;
 using namespace wgpu;
 
-int __main__(int argc, const char *argv[]);
-
-extern "C" __attribute__((used, visibility("default"))) int
-_main(int argc, const char *argv[])
-{
-  return __main__(argc, argv);
-}
-
 namespace DGame {
 struct SDLRuntime
 {
@@ -49,7 +41,6 @@ struct SDLRuntime
   }
 
   promise<int> Exit;
-  future<void> loop;
 
   explicit SDLRuntime()
   {
@@ -144,14 +135,14 @@ struct SDLRuntime
       false
     );
 #else
-    loop = async(launch::async, [this]() {
+    thread([this]() {
       while(isRunning)
       {
         ProcessEvents();
         this_thread::sleep_for(microseconds(PollingDelay));
       }
       Exit.set_value(EXIT_SUCCESS);
-    });
+    }).detach();
 #endif
   }
 
@@ -305,13 +296,3 @@ Window::~Window()
   SDL_DestroyWindow(window);
 }
 } // namespace DGame
-
-#undef main
-
-int
-main(int argc, const char *argv[])
-{
-  __main__(argc, argv);
-  DGame::SDLRuntime::Instance->loop.wait();
-  return 0;
-}

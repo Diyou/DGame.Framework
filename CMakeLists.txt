@@ -73,7 +73,6 @@ endif(${BUILD_WASM})
 target_include_directories(DGame.Framework PUBLIC Header)
 
 target_sources(DGame.Framework PRIVATE Source/Backends/SDLWindow.cpp)
-target_compile_definitions(DGame.Framework PUBLIC main=__main__)
 
 set(INTERMEDIATE_HEADERS ${CMAKE_BINARY_DIR}/Intermediate)
 include(Shaders)
