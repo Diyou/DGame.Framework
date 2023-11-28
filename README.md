@@ -14,7 +14,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 ## Table of Content
 
 - [Known Issues](#known-issues)
-- [Build Dependencies](#build-dependencies)
+- [Build Dependencies](#build-requirements)
 - [Libraries](#libraries)
 - [Examples](#examples)
 - [License](#license)
@@ -23,7 +23,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 
 - Wayland window freezes with PresentMode::Fifo with nvidia proprietary drivers > 545.29
 
-### Build Dependencies
+### Build Requirements
 
 - [cmake](https://cmake.org/) > 3.24
 - A c++ build environment (clang, msvc, gcc)
@@ -33,7 +33,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 | Library                                                     | Usecase                             | License                                                                                 |
 | :---------------------------------------------------------- | :---------------------------------- | :-------------------------------------------------------------------------------------- |
 | [boost](https://github.com/boostorg/boost)                  | Thread Pools, Netcode               | [BSL-1.0](https://https://github.com/boostorg/boost/blob/master/LICENSE_1_0.txt)        |
-| [SDL2](https://github.com/libsdl-org/SDL)                   | Window creation, Audio, User events | [Zlib](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)                         |
+| [SDL2](https://github.com/libsdl-org/SDL)                   | Window creation, Audio, UI          | [Zlib](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)                         |
 | [glm](https://github.com/g-truc/glm)                        | Vector Math                         | [MIT](https://github.com/g-truc/glm/blob/master/copying.txt)(*)                         |
 | [emscripten](https://github.com/emscripten-core/emscripten) | WASM webgpu implementation          | [MIT](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)(*)               |
 | [dawn](https://dawn.googlesource.com/)                      | Native webgpu implementation        | [BSD-3](https://dawn.googlesource.com/dawn/+/HEAD/LICENSE)                              |
