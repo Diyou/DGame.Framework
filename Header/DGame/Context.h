@@ -12,6 +12,8 @@
 
 #include "webgpu/webgpu_cpp.h"
 
+#include <optional>
+
 namespace DGame {
 
 struct RunTimeExit
@@ -32,8 +34,8 @@ struct Context
    *  @param windowTitle:		The window title.
    *  @param windowWidth: 	The window width.
    *  @param windowHeight:	The window height.
-   *  @param x: 	The windows horitonal position.
-   *  @param y:	The windows vertical positon.
+   *  @param posX: 	The windows horitonal position.
+   *  @param posY:	The windows vertical positon.
    */
   Context(
     const char *windowTitle,
