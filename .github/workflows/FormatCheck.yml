@@ -1,5 +1,5 @@
 name: FormatCheck
-on: [push, pull_request]
+on: [push, pull_request, workflow_call]
 jobs:
   clang-format:
     name: Clang-Format
