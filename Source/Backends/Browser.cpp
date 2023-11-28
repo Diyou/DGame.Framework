@@ -40,12 +40,12 @@ struct Backend::IBackend : public Window
         original.style.position = "absolute";
         original.style.zIndex = -1;
         canvas.removeAttribute("style");
-        canvas.id = `SDLWindow${$1}`;
-        canvas.title = UTF8ToString($0);
+        canvas.id = UTF8ToString($0);
+        canvas.title = UTF8ToString($1);
         document.body.insertBefore(original, canvas);
       },
-      Title(),
-      SDL_GetWindowID(window)
+      ID.c_str(),
+      Title()
     );
   }
 
@@ -79,7 +79,7 @@ struct Backend::IBackend : public Window
 
     return device.CreateSwapChain(surface, &descriptor);
   }
-};
+}; // namespace DGame
 
 Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 : implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))

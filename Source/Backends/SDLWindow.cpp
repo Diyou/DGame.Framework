@@ -207,6 +207,10 @@ Window::Window(const char *title, int width, int height)
     throw runtime_error("Could not create SDL Window");
   }
   SDL_SetWindowData(window, "&", this);
+#ifdef __EMSCRIPTEN__
+  ID = "SDLWindow" + to_string(SDL_GetWindowID(window));
+  Selector = "canvas#" + ID;
+#endif
 }
 
 const char *
@@ -249,10 +253,8 @@ Window::createSurfaceDescriptor()
 #if defined(__EMSCRIPTEN__)
   auto descriptor = make_unique<SurfaceDescriptorFromCanvasHTMLSelector>();
   descriptor->sType = SType::SurfaceDescriptorFromCanvasHTMLSelector;
-  stringstream id;
-  id << "canvas#SDLWindow" << to_string(SDL_GetWindowID(window));
-  descriptor->selector = id.str().c_str();
-  return std::move(descriptor);
+  descriptor->selector = Selector.c_str();
+  return descriptor;
 #elif defined(_WIN32)
   auto descriptor = make_unique<SurfaceDescriptorFromWindowsHWND>();
   descriptor->hwnd = sysWMInfo.info.win.window;

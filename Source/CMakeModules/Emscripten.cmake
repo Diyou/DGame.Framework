@@ -66,16 +66,13 @@ if(${BUILD_WASM})
 
   # Define Emscripten Interface Libraries
 
-  # This target should not rely on SharedArrayBuffer See
-  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
-  add_library(DGame.EMSlib INTERFACE)
+  add_library(DGame.EMSlib.common INTERFACE)
 
   # See https://github.com/emscripten-core/emscripten/blob/main/src/settings.js
   target_link_options(
-    DGame.EMSlib
+    DGame.EMSlib.common
     INTERFACE -sUSE_WEBGPU
               -sASYNCIFY
-              -sENVIRONMENT=web,worker
               -sWASM=1
               -sWASM_BIGINT=1
               -sNO_EXIT_RUNTIME=1
@@ -83,6 +80,7 @@ if(${BUILD_WASM})
               -sUSE_SDL=2
               -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1
               --output_eol=linux
+              -sALLOW_MEMORY_GROWTH=0
               # -sMEMORY64
               $<$<CONFIG:Debug>:
               -fsanitize=undefined
@@ -91,33 +89,49 @@ if(${BUILD_WASM})
               -sASSERTIONS=1
               -sSAFE_HEAP=1
               -Wno-limited-postlink-optimizations
+              --emrun
               >
   )
   target_compile_options(
-    DGame.EMSlib
+    DGame.EMSlib.common
     INTERFACE -sUSE_SDL=2
               # -sMEMORY64
               $<$<CONFIG:Debug>:
               -fsanitize=undefined
               >
   )
-  target_precompile_headers(DGame.EMSlib INTERFACE <emscripten.h>)
+  target_precompile_headers(DGame.EMSlib.common INTERFACE <emscripten.h>)
+
+  # This target should not rely on SharedArrayBuffer See
+  # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
+  add_library(DGame.EMSlib INTERFACE)
+  target_link_libraries(DGame.EMSlib INTERFACE DGame.EMSlib.common)
+
+  target_link_options(
+    DGame.EMSlib
+    INTERFACE -sENVIRONMENT=web
+              $<$<CONFIG:Debug>:
+              -sMALLOC="emmalloc-memvalidate"
+              >
+              $<$<CONFIG:Release>:
+              -sMALLOC="emmalloc"
+              >
+  )
 
   # This target relies on SharedArrayBuffer for Multithreading
   add_library(DGame.EMSlib_mt INTERFACE)
-  target_link_libraries(DGame.EMSlib_mt INTERFACE DGame.EMSlib)
+  target_link_libraries(DGame.EMSlib_mt INTERFACE DGame.EMSlib.common)
   target_link_options(
     DGame.EMSlib_mt
     INTERFACE # -sEXPORT_NAME=DGame -sMODULARIZE=1
+              -sENVIRONMENT=web,worker
               -sOFFSCREENCANVAS_SUPPORT=1
               -sOFFSCREEN_FRAMEBUFFER=1
               -sUSE_PTHREADS=1
               -sPROXY_TO_PTHREAD=1
               -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
               -pthread
-              $<$<CONFIG:Debug>:
-              --emrun
-              >
+              #-sMALLOC="emmalloc"
   )
   target_compile_options(DGame.EMSlib_mt INTERFACE -pthread)
 

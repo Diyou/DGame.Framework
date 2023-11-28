@@ -27,6 +27,9 @@ struct Window
   };
 
   SDL_Window *window;
+#ifdef __EMSCRIPTEN__
+  std::string ID, Selector;
+#endif
 
   bool isAlive = true;
 
