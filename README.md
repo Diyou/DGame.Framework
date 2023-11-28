@@ -14,7 +14,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 ## Table of Content
 
 - [Known Issues](#known-issues)
-- [Dependencies](#dependencies)
+- [Build Dependencies](#build-dependencies)
 - [Libraries](#libraries)
 - [Examples](#examples)
 - [License](#license)
@@ -23,21 +23,23 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 
 - Wayland window freezes with PresentMode::Fifo with nvidia proprietary drivers > 545.29
 
-### Dependencies
+### Build Dependencies
 
 - [cmake](https://cmake.org/) > 3.24
-- [SDL2](https://www.libsdl.org/) (portable version included)
-- [emsdk](https://github.com/emscripten-core/emsdk) (optional & portable version included)
+- A c++ build environment(clang,msvc,gcc)
 
 ### Libraries
 
-| Library                                                     | Usecase                      | License                                                                               |
-| :---------------------------------------------------------- | :--------------------------- | :------------------------------------------------------------------------------------ |
-| [boost](https://github.com/boostorg/boost)                  | Thread Pools,Netcode         | [BSL-1.0](https://https://github.com/boostorg/boost/blob/master/LICENSE_1_0.txt)      |
-| [glm](https://github.com/g-truc/glm)                        | Vector Math                  | [MIT](https://github.com/g-truc/glm/blob/master/copying.txt)                          |
-| [dawn](https://dawn.googlesource.com/)                      | Native webgpu implementation | [BSD-3](https://dawn.googlesource.com/dawn/+/HEAD/LICENSE)                            |
-| [OpenUSD](https://github.com/PixarAnimationStudios/OpenUSD) | Scene parsing                | [Apache-2](https://github.com/PixarAnimationStudios/OpenUSD/blob/release/LICENSE.txt) |
+| Library                                                     | Usecase                             | License                                                                                 |
+| :---------------------------------------------------------- | :---------------------------------- | :-------------------------------------------------------------------------------------- |
+| [boost](https://github.com/boostorg/boost)                  | Thread Pools,Netcode                | [BSL-1.0](https://https://github.com/boostorg/boost/blob/master/LICENSE_1_0.txt)        |
+| [SDL2](https://github.com/libsdl-org/SDL)                   | Window creation, Audio, User events | [Zlib](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)                         |
+| [glm](https://github.com/g-truc/glm)                        | Vector Math                         | [MIT](https://github.com/g-truc/glm/blob/master/copying.txt)(*)                         |
+| [emscripten](https://github.com/emscripten-core/emscripten) | WASM webgpu implementation          | [MIT](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)(*)               |
+| [dawn](https://dawn.googlesource.com/)                      | Native webgpu implementation        | [BSD-3](https://dawn.googlesource.com/dawn/+/HEAD/LICENSE)                              |
+| [OpenUSD](https://github.com/PixarAnimationStudios/OpenUSD) | Scene parsing                       | [Apache-2](https://github.com/PixarAnimationStudios/OpenUSD/blob/release/LICENSE.txt)(*)|
 
+(*) Has multiple or modified versions of the license. See the link for more information.
 ### Examples
 
 - [HelloTriangle](https://diyou.github.io/DGame.Framework/HelloTriangle.html) Running two Triangles in parallel
