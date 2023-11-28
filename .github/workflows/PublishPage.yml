@@ -1,8 +1,8 @@
-name: Build example page with emscripten
+name: Publish Page
 
 env:
   EM_VERSION: 3.1.47
-  EM_CACHE_FOLDER: '.cache/emsdk'
+  CACHE_FOLDER: '.cache'
   DIST_DIR: 'build/Release.WASM/dist'
 
 on:
@@ -16,23 +16,28 @@ jobs:
   clang-format:
     uses: ./.github/workflows/FormatCheck.yml
 
-  Emscripten-Build:
+  build:
     needs: clang-format
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
-          path: ${{env.EM_CACHE_FOLDER}}
-          key: ${{env.EM_VERSION}}-${{runner.os}}
+          path: ${{env.CACHE_FOLDER}}
+          key: WASM.cache
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v12
         with:
           version: ${{env.EM_VERSION}}
-          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
+          actions-cache-folder: ${{env.CACHE_FOLDER}}/emsdk
       - name: Setup CMake
         uses: lukka/get-cmake@latest
       - name: Build Target
