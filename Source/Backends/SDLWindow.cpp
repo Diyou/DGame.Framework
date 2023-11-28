@@ -189,6 +189,8 @@ RunTimeExit::operator int()
 #endif
 };
 
+constexpr char WindowRequestString[] = "&";
+
 Window::Window(const char *title, int width, int height)
 {
   BackendType = SDLRuntime::Instance->SupportedBackends[0];
@@ -206,7 +208,7 @@ Window::Window(const char *title, int width, int height)
     cerr << SDL_GetError() << endl;
     throw runtime_error("Could not create SDL Window");
   }
-  SDL_SetWindowData(window, "&", this);
+  SDL_SetWindowData(window, WindowRequestString, this);
 #ifdef __EMSCRIPTEN__
   ID = "SDLWindow" + to_string(SDL_GetWindowID(window));
   Selector = "canvas#" + ID;
@@ -230,7 +232,7 @@ Window::Size() const
 Window *
 Window::FromSDLWindow(SDL_Window *window)
 {
-  return (Window *)SDL_GetWindowData(window, "&");
+  return (Window *)SDL_GetWindowData(window, WindowRequestString);
 }
 
 Window *

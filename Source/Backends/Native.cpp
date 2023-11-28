@@ -10,7 +10,7 @@
 
 #ifndef __EMSCRIPTEN__
 
-#include "DGame/Backend.h"
+#include "DGame/Context.h"
 #include "SDLWindow.h"
 #include "dawn/dawn_proc.h"
 #include "dawn/native/DawnNative.h"
@@ -86,7 +86,7 @@ DeviceLogCallback(WGPULoggingType type, const char *message, void *)
 
 static DawnProcTable procs = dawn::native::GetProcs();
 
-struct Backend::IBackend : public Window
+struct Context::Backend : public Window
 {
   unique_ptr<native::Instance> instance;
 
@@ -96,7 +96,7 @@ struct Backend::IBackend : public Window
    * @param windowWidth
    * @param windowHeight
    */
-  IBackend(const char *windowTitle, int windowWidth, int windowHeight)
+  Backend(const char *windowTitle, int windowWidth, int windowHeight)
   : Window(windowTitle, windowWidth, windowHeight)
   {
     // Create Instance
@@ -214,8 +214,8 @@ struct Backend::IBackend : public Window
   }
 };
 
-Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+Context::Context(const char *windowTitle, int windowWidth, int windowHeight)
+: implementation(new Context::Backend(windowTitle, windowWidth, windowHeight))
 , IsRendering(implementation->isAlive)
 {
   device = implementation->createDevice();
@@ -227,7 +227,7 @@ Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
 }
 
 void
-Backend::Start()
+Context::Start()
 {
   auto start = std::thread([this]() {
     while(IsRendering)
@@ -243,7 +243,7 @@ Backend::Start()
   SDL_ShowWindow(implementation->window);
 }
 
-Backend::~Backend()
+Context::~Context()
 {
   device.SetDeviceLostCallback(nullptr, nullptr);
 }

@@ -8,13 +8,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "DGame/Backend.h"
+#include "DGame/Context.h"
 
 using namespace std;
 using namespace wgpu;
 using namespace DGame;
 
-class HelloTriangle : public Backend
+class HelloTriangle : public Context
 {
   // clang-format off
   const vector<float> Vertices = {
@@ -46,38 +46,44 @@ class HelloTriangle : public Backend
   draw()
   {
     TextureView backBuffer = swapchain.GetCurrentTextureView();
-    RenderPassColorAttachment colorDesc{};
-
-    colorDesc.view = backBuffer;
-    colorDesc.loadOp = LoadOp::Clear;
-    colorDesc.storeOp = StoreOp::Store;
-
-    colorDesc.clearValue.r = 0.3f;
-    colorDesc.clearValue.g = 0.3f;
-    colorDesc.clearValue.b = 0.3f;
-    colorDesc.clearValue.a = 1.0f;
-
     RenderPassDescriptor renderPass{};
-    renderPass.colorAttachmentCount = 1;
-    renderPass.colorAttachments = &colorDesc;
+
+    {
+      RenderPassColorAttachment colorDesc{};
+
+      colorDesc.view = backBuffer;
+      colorDesc.loadOp = LoadOp::Clear;
+      colorDesc.storeOp = StoreOp::Store;
+
+      colorDesc.clearValue.r = 0.3f;
+      colorDesc.clearValue.g = 0.3f;
+      colorDesc.clearValue.b = 0.3f;
+      colorDesc.clearValue.a = 1.0f;
+
+      renderPass.colorAttachmentCount = 1;
+      renderPass.colorAttachments = &colorDesc;
+    }
 
     CommandEncoder encoder = device.CreateCommandEncoder(nullptr);
-    RenderPassEncoder pass = encoder.BeginRenderPass(&renderPass);
 
-    // update scene
-    // scene.get()->update();
-    rotation.value += 0.1f;
-    queue.WriteBuffer(rotation.buffer, 0, &rotation.value, rotation.size);
-    // draw scene
-    pass.SetPipeline(pipeline);
-    pass.SetBindGroup(0, bindGroup, 0, 0);
+    {
+      RenderPassEncoder pass = encoder.BeginRenderPass(&renderPass);
 
-    pass.SetVertexBuffer(0, vertexBuffer, 0, kWholeSize);
-    pass.SetIndexBuffer(indexBuffer, IndexFormat::Uint16, 0, kWholeSize);
-    pass.DrawIndexed(3, 1, 0, 0, 0);
+      // update scene
+      // scene.get()->update();
+      rotation.value += 0.1f;
+      queue.WriteBuffer(rotation.buffer, 0, &rotation.value, rotation.size);
+      // draw scene
+      pass.SetPipeline(pipeline);
+      pass.SetBindGroup(0, bindGroup, 0, 0);
 
-    // finish
-    pass.End();
+      pass.SetVertexBuffer(0, vertexBuffer, 0, kWholeSize);
+      pass.SetIndexBuffer(indexBuffer, IndexFormat::Uint16, 0, kWholeSize);
+      pass.DrawIndexed(3, 1, 0, 0, 0);
+
+      // finish
+      pass.End();
+    }
 
     CommandBuffer commands = encoder.Finish(nullptr);
 
@@ -99,7 +105,7 @@ public:
   Buffer vertexBuffer, indexBuffer;
 
   HelloTriangle()
-  : Backend("Dawn Example", 720, 480)
+  : Context("Dawn Example", 720, 480)
   , rotation(createUniform<float>(0))
   {
     // Setup pipeline

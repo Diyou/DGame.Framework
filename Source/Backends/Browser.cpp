@@ -10,7 +10,7 @@
 
 #ifdef __EMSCRIPTEN__
 
-#include "DGame/Backend.h"
+#include "DGame/Context.h"
 #include "SDLWindow.h"
 #if defined(__EMSCRIPTEN_PTHREADS__)
 #include <thread>
@@ -24,12 +24,12 @@ using namespace std;
 using namespace wgpu;
 
 namespace DGame {
-struct Backend::IBackend : public Window
+struct Context::Backend : public Window
 {
   Instance instance;
   bool isAlive = true;
 
-  IBackend(const char *windowTitle, int windowWidth, int windowHeight)
+  Backend(const char *windowTitle, int windowWidth, int windowHeight)
   : instance(CreateInstance())
   , Window(windowTitle, windowWidth, windowHeight)
   {
@@ -81,26 +81,18 @@ struct Backend::IBackend : public Window
   }
 }; // namespace DGame
 
-Backend::Backend(const char *windowTitle, int windowWidth, int windowHeight)
-: implementation(new Backend::IBackend(windowTitle, windowWidth, windowHeight))
+Context::Context(const char *windowTitle, int windowWidth, int windowHeight)
+: implementation(new Context::Backend(windowTitle, windowWidth, windowHeight))
 , IsRendering(implementation->isAlive)
 {
   device = implementation->createDevice();
   surface = implementation->createSurface();
   swapchain = implementation->createSwapChain(device, surface);
   queue = device.GetQueue();
-
-  /*queue.OnSubmittedWorkDone(
-    WGPUQueueWorkDoneStatus_Success,
-    [](WGPUQueueWorkDoneStatus status, void *userData) {
-      cout << status << endl;
-    },
-    this
-  );*/
 }
 
 void
-Backend::Start()
+Context::Start()
 {
 #if defined(__EMSCRIPTEN_PTHREADS__)
   thread([this]() {
@@ -111,42 +103,18 @@ Backend::Start()
   }).detach();
 #else
   auto cb = [](double time, void *userData) -> EM_BOOL {
-    auto _this = (Backend *)userData;
-    _this->draw();
-    _this->Start();
-    return _this->IsRendering;
+    auto self = (Context *)userData;
+    self->draw();
+    self->Start();
+    return self->IsRendering;
   };
   emscripten_request_animation_frame(cb, this);
 #endif
   SDL_ShowWindow(implementation->window);
 }
 
-Backend::~Backend()
+Context::~Context()
 {}
 
 } // namespace DGame
-
-/*
-__attribute__((constructor)) void init()
-{
-  EM_ASM({
-    if (navigator["gpu"])
-    {
-      navigator["gpu"]["requestAdapter"]().then(
-        function(adapter) {
-          adapter["requestDevice"]().then(function(device) {
-            Module["preinitializedWebGPUDevice"] = device;
-            __async_main();
-          });
-        },
-        function() { console.error("No WebGPU adapter; not starting"); }
-      );
-    }
-    else
-    {
-      console.error("No support for WebGPU; not starting");
-    }
-  });
-}
-*/
 #endif

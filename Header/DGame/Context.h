@@ -25,7 +25,7 @@ struct RunTimeExit
  */
 static RunTimeExit Return{};
 
-struct Backend
+struct Context
 {
   /**
    *  @brief Creates a DAWN rendering context.
@@ -33,14 +33,14 @@ struct Backend
    *  @param windowWidth: 	The window width.
    *  @param windowHeight:	The window height.
    */
-  Backend(const char *windowTitle, int windowWidth, int windowHeight);
+  Context(const char *windowTitle, int windowWidth, int windowHeight);
 
   /** @fn void Backend::Start()
    *  @brief Start Rendering
    */
   void Start();
 
-  virtual ~Backend();
+  virtual ~Context();
 
 protected:
   wgpu::Device device;
@@ -50,8 +50,8 @@ protected:
   virtual void draw() = 0;
 
 private:
-  struct IBackend;
-  std::unique_ptr<IBackend> implementation;
+  struct Backend;
+  std::unique_ptr<Backend> implementation;
 
   bool &IsRendering;
 };

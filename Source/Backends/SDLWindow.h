@@ -9,8 +9,7 @@
  */
 
 #pragma once
-
-#include "DGame/Backend.h"
+#include "DGame/Context.h"
 
 #include <SDL2/SDL.h>
 
