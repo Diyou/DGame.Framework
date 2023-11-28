@@ -14,7 +14,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 ## Table of Content
 
 - [Known Issues](#known-issues)
-- [Build Dependencies](#build-requirements)
+- [Build Requirements](#build-requirements)
 - [Libraries](#libraries)
 - [Examples](#examples)
 - [License](#license)
