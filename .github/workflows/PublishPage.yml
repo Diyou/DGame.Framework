@@ -6,18 +6,14 @@ env:
   DIST_DIR: 'build/Release.WASM/dist'
 
 on:
-  push:
-    branches: ['main']
-  pull_request:
-    branches: ['main']
   workflow_dispatch:
 
 jobs:
-  FormatCheck:
+  ClangFormat:
     uses: ./.github/workflows/FormatCheck.yml
 
   Publish:
-    needs: FormatCheck
+    needs: ClangFormat
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
