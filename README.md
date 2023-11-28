@@ -13,7 +13,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 
 ## Table of Content
 
-- [Known Issues](#knownissues)
+- [Known Issues](#known-issues)
 - [Dependencies](#dependencies)
 - [Libraries](#libraries)
 - [Examples](#examples)
