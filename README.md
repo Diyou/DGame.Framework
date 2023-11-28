@@ -26,13 +26,13 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 ### Build Dependencies
 
 - [cmake](https://cmake.org/) > 3.24
-- A c++ build environment(clang,msvc,gcc)
+- A c++ build environment (clang, msvc, gcc)
 
 ### Libraries
 
 | Library                                                     | Usecase                             | License                                                                                 |
 | :---------------------------------------------------------- | :---------------------------------- | :-------------------------------------------------------------------------------------- |
-| [boost](https://github.com/boostorg/boost)                  | Thread Pools,Netcode                | [BSL-1.0](https://https://github.com/boostorg/boost/blob/master/LICENSE_1_0.txt)        |
+| [boost](https://github.com/boostorg/boost)                  | Thread Pools, Netcode               | [BSL-1.0](https://https://github.com/boostorg/boost/blob/master/LICENSE_1_0.txt)        |
 | [SDL2](https://github.com/libsdl-org/SDL)                   | Window creation, Audio, User events | [Zlib](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)                         |
 | [glm](https://github.com/g-truc/glm)                        | Vector Math                         | [MIT](https://github.com/g-truc/glm/blob/master/copying.txt)(*)                         |
 | [emscripten](https://github.com/emscripten-core/emscripten) | WASM webgpu implementation          | [MIT](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)(*)               |
