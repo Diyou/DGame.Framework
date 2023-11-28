@@ -28,7 +28,7 @@ static RunTimeExit Return{};
 struct Context
 {
   /**
-   *  @brief Creates a DAWN rendering context.
+   *  @brief Creates a webgpu rendering context.
    *  @param windowTitle:		The window title.
    *  @param windowWidth: 	The window width.
    *  @param windowHeight:	The window height.
