@@ -1,4 +1,4 @@
-name: Publish Page
+name: Page
 
 env:
   EM_VERSION: 3.1.47
@@ -13,11 +13,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  clang-format:
+  FormatCheck:
     uses: ./.github/workflows/FormatCheck.yml
 
-  build:
-    needs: clang-format
+  Publish:
+    needs: FormatCheck
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source

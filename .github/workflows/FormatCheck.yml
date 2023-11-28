@@ -1,7 +1,7 @@
 name: Clang-Format
 on: workflow_call
 jobs:
-  clang-format:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
