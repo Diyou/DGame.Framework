@@ -191,18 +191,12 @@ RunTimeExit::operator int()
 
 constexpr char WindowRequestString[] = "&";
 
-Window::Window(const char *title, int width, int height)
+Window::Window(const char *title, int width, int height, int posX, int posY)
 {
   BackendType = SDLRuntime::Instance->SupportedBackends[0];
 
-  window = SDL_CreateWindow(
-    title,
-    SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED,
-    width,
-    height,
-    SDL_WINDOW_HIDDEN
-  );
+  window
+    = SDL_CreateWindow(title, posX, posY, width, height, SDL_WINDOW_HIDDEN);
   if(window == NULL)
   {
     cerr << SDL_GetError() << endl;

@@ -32,8 +32,16 @@ struct Context
    *  @param windowTitle:		The window title.
    *  @param windowWidth: 	The window width.
    *  @param windowHeight:	The window height.
+   *  @param x: 	The windows horitonal position.
+   *  @param y:	The windows vertical positon.
    */
-  Context(const char *windowTitle, int windowWidth, int windowHeight);
+  Context(
+    const char *windowTitle,
+    int windowWidth,
+    int windowHeight,
+    std::optional<int> posX = std::nullopt,
+    std::optional<int> posY = std::nullopt
+  );
 
   /** @fn void Backend::Start()
    *  @brief Start Rendering

@@ -34,7 +34,7 @@ struct Window
 
   wgpu::BackendType BackendType;
 
-  Window(const char *title, int width, int height);
+  Window(const char *title, int width, int height, int posX, int posY);
 
   const char *Title() const;
   Dimension Size() const;

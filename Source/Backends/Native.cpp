@@ -96,8 +96,14 @@ struct Context::Backend : public Window
    * @param windowWidth
    * @param windowHeight
    */
-  Backend(const char *windowTitle, int windowWidth, int windowHeight)
-  : Window(windowTitle, windowWidth, windowHeight)
+  Backend(
+    const char *windowTitle,
+    int windowWidth,
+    int windowHeight,
+    int x,
+    int y
+  )
+  : Window(windowTitle, windowWidth, windowHeight, x, y)
   {
     // Create Instance
     InstanceDescriptor descriptor{};
@@ -214,8 +220,20 @@ struct Context::Backend : public Window
   }
 };
 
-Context::Context(const char *windowTitle, int windowWidth, int windowHeight)
-: implementation(new Context::Backend(windowTitle, windowWidth, windowHeight))
+Context::Context(
+  const char *windowTitle,
+  int windowWidth,
+  int windowHeight,
+  std::optional<int> posX,
+  std::optional<int> posY
+)
+: implementation(new Context::Backend(
+  windowTitle,
+  windowWidth,
+  windowHeight,
+  posX.has_value() ? posX.value() : SDL_WINDOWPOS_UNDEFINED,
+  posY.has_value() ? posY.value() : SDL_WINDOWPOS_UNDEFINED
+))
 , IsRendering(implementation->isAlive)
 {
   device = implementation->createDevice();

@@ -26,7 +26,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 ### Build Requirements
 
 - [cmake](https://cmake.org/) > 3.24
-- A c++ build environment (clang, msvc, gcc)
+- A c++17 capable build environment (clang, msvc, gcc)
 
 ### Libraries
 
