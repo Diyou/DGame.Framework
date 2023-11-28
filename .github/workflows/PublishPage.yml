@@ -10,6 +10,7 @@ on:
     branches: ['main']
   pull_request:
     branches: ['main']
+  workflow_dispatch:
 
 jobs:
   Emscripten-Build:
@@ -32,8 +33,11 @@ jobs:
         with:
           configurePreset: 'Release.WASM'
           buildPreset: 'Release.WASM'
-          buildPresetAdditionalArgs: "['--target DGame.Framework']"
+          buildPresetAdditionalArgs: "['--target HelloTriangle']"
       - name: Upload Pages Artifacts
         uses: actions/upload-pages-artifact@v2
         with:
           path: ${{env.DIST_DIR}}
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
