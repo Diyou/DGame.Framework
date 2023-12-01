@@ -40,6 +40,7 @@
       "name": "Release",
       "inherits": ["Default"],
       "cacheVariables": {
+        "BUILD_SHARED_LIBS": "OFF",
         "CMAKE_BUILD_TYPE": "Release"
       },
       "displayName": "Release Config",
