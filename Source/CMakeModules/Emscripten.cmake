@@ -77,6 +77,7 @@ if(${BUILD_WASM})
               -sWASM_BIGINT=1
               -sNO_EXIT_RUNTIME=1
               -sINVOKE_RUN=0
+              -sUSE_BOOST_HEADERS=1
               -sUSE_SDL=2
               -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1
               --output_eol=linux
@@ -94,7 +95,8 @@ if(${BUILD_WASM})
   )
   target_compile_options(
     DGame.EMSlib.common
-    INTERFACE -sUSE_SDL=2
+    INTERFACE -sUSE_BOOST_HEADERS=1
+              -sUSE_SDL=2
               # -sMEMORY64
               $<$<CONFIG:Debug>:
               -fsanitize=undefined

@@ -1,0 +1,102 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CACHE_FOLDER: '.cache'
+  BUILD_FOLDER: 'build'
+  DIST_DIR: 'build/Release/dist'
+
+jobs:
+  ClangFormat:
+    uses: ./.github/workflows/FormatCheck.yml
+
+  build:
+    needs: ClangFormat
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              name: 'Windows Latest',
+              artifact: 'Windows-MSVC',
+              os: windows-latest,
+              boost-platform-version: 2022,
+              boost-toolset: msvc,
+            }
+          - {
+              name: 'Ubuntu Latest',
+              artifact: 'Linux-GCC',
+              os: ubuntu-latest,
+              boost-platform-version: 20.04,
+              boost-toolset: gcc,
+            }
+          - {
+              name: 'macOS Latest',
+              artifact: 'macOS-Clang',
+              os: macos-latest,
+              boost-platform-version: 11,
+              boost-toolset: clang,
+            }
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ${{env.CACHE_FOLDER}}
+          key: ${{ matrix.config.name }}.cache
+      - uses: actions/cache@v3
+        with:
+          path: ${{env.BUILD_FOLDER}}
+          key: ${{ matrix.config.name }}.build.cache
+      - name: Prepare Ubuntu
+        if: matrix.config.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libx11-xcb-dev
+      - name: Prepare Windows
+        if: matrix.config.os == 'windows-latest'
+        uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+      - name: Install boost
+        uses: MarkusJx/install-boost@v2.4.4
+        id: install-boost
+        with:
+          # REQUIRED: Specify the required boost version
+          # A list of supported versions can be found here:
+          # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
+          boost_version: 1.83.0
+          platform_version: ${{ matrix.config.boost-platform-version }}
+          toolset: ${{ matrix.config.boost-toolset }}
+      - name: Install SDL
+        uses: libsdl-org/setup-sdl@main
+        id: sdl
+        with:
+          install-linux-dependencies: true
+          version: sdl2-latest
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: abe01a20d3652f9443eed96bc7ec888d5d194674
+      - name: Build Target
+        uses: lukka/run-cmake@v10
+        env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+        with:
+          configurePreset: 'Release'
+          buildPreset: 'Release'
+          buildPresetAdditionalArgs: "['--target HelloTriangle']"
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.config.artifact }}
+          path: ${{ env.DIST_DIR }}

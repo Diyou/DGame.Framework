@@ -14,6 +14,7 @@
 #include <future>
 #include <sstream>
 #include <thread>
+#include <vector>
 
 using namespace std;
 using namespace chrono;
@@ -82,7 +83,11 @@ struct SDLRuntime
     }
     else
     {
+#ifdef _WIN32
+      SetEnvironmentVariable("SDL_VIDEODRIVER", NULL);
+#else
       unsetenv("SDL_VIDEODRIVER");
+#endif
       if(PreferredDriver.empty() || SDL_VideoInit(PreferredDriver.c_str()) != 0)
       {
         SDL_VideoInit(NULL);

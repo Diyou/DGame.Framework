@@ -17,6 +17,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.browse.path": ["Header", "Source"],
   "C_Cpp.formatting": "clangFormat",
   "C_Cpp.codeAnalysis.clangTidy.enabled": true,
   "[cpp]": {
@@ -139,7 +140,8 @@
     "*.hpp11": "cpp",
     "*.def": "cpp",
     "stdfloat": "cpp",
-    "cassert": "cpp"
+    "cassert": "cpp",
+    "*.ipp": "cpp"
   },
   "C_Cpp.inlayHints.parameterNames.enabled": true,
   "C_Cpp.doxygen.generatedStyle": "/**",
@@ -178,8 +180,8 @@
     "**/*.code-search": true
   },
   "files.exclude": {
-    ".cache/**": true,
-    "build/**": true,
+    ".cache": true,
+    "build": true,
     "**/.git": true,
     "**/.github": false,
     "**/.vscode": false,

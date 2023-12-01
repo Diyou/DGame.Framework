@@ -10,6 +10,8 @@
 
 #include "DGame/Context.h"
 
+#include <vector>
+
 using namespace std;
 using namespace wgpu;
 using namespace DGame;

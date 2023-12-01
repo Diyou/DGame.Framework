@@ -1,5 +1,5 @@
 /**
- * Backend.h - DGame.Framework
+ * Context.h - DGame.Framework
  *
  * Copyright (c) 2023 Diyou
  * All rights reserved.
@@ -31,11 +31,11 @@ struct Context
 {
   /**
    *  @brief Creates a webgpu rendering context.
-   *  @param windowTitle:		The window title.
-   *  @param windowWidth: 	The window width.
-   *  @param windowHeight:	The window height.
-   *  @param posX: 	The windows horitonal position.
-   *  @param posY:	The windows vertical positon.
+   *  @param windowTitle:   Title of window.
+   *  @param windowWidth:   Width of the windowh.
+   *  @param windowHeight:  Height of the window.
+   *  @param posX:  Horitonal position of the window.
+   *  @param posY:  Vertical positon of the window.
    */
   Context(
     const char *windowTitle,
