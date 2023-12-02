@@ -1,10 +1,5 @@
 {
   "version": 5,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 24,
-    "patch": 0
-  },
   "configurePresets": [
     {
       "name": "multilib",
@@ -31,8 +26,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       },
-      "displayName": "Debug Config",
-      "description": "Debug build using Ninja generator",
+      "displayName": "Debug",
+      "description": "Configuration with default Toolchain + Ninja",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/Debug"
     },
@@ -43,23 +38,23 @@
         "BUILD_SHARED_LIBS": "OFF",
         "CMAKE_BUILD_TYPE": "Release"
       },
-      "displayName": "Release Config",
-      "description": "Release build using Ninja generator",
+      "displayName": "Release",
+      "description": "Configuration with default Toolchain + Ninja",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/Release"
     },
     {
       "name": "Debug.WASM",
       "inherits": ["Debug", "WASM"],
-      "displayName": "Debug.WASM Config",
-      "description": "Debug build using Emscripten Toolchain",
+      "displayName": "Debug.WASM",
+      "description": "Configuration with Emscripten Toolchain",
       "binaryDir": "${sourceDir}/build/Debug.WASM"
     },
     {
       "name": "Release.WASM",
       "inherits": ["Release", "WASM"],
-      "displayName": "Release.WASM Config",
-      "description": "Release build using Emscripten Toolchain",
+      "displayName": "Release.WASM",
+      "description": "Configuration with Emscripten Toolchain",
       "binaryDir": "${sourceDir}/build/Release.WASM"
     }
   ],
@@ -81,11 +76,13 @@
     },
     {
       "name": "Debug.WASM",
+      "displayName": "Debug",
       "inherits": ["default"],
       "configurePreset": "Debug.WASM"
     },
     {
       "name": "Release.WASM",
+      "displayName": "Release",
       "inherits": ["default"],
       "configurePreset": "Release.WASM"
     }
