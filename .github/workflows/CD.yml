@@ -30,6 +30,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         name: Release
         with:
+          tag_name: latest
           body: |
             [**Buildlog**](${{ github.workspace }}/actions/runs/${{ github.run_id}})
           files: '*'
