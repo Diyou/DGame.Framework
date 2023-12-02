@@ -20,10 +20,9 @@ jobs:
               fname=${i##*/}                                                                               
               cd $i                                                                                                    
               for z in *; do                                                                                                                    
-              mv $z ../${fname}-${z}                                                                                                      
+              zip -r ../${fname}-${z}.zip ./*                                                                                                     
               done
               cd ..
-              rmdir ${fname}
               fi
           done
           ls -R
@@ -32,5 +31,5 @@ jobs:
         with:
           tag_name: latest
           body: |
-            [**Buildlog**](${{ github.workspace }}/actions/runs/${{ github.run_id}})
+            [**Buildlog**](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id}})
           files: '*'
