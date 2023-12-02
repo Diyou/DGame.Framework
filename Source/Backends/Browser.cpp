@@ -39,6 +39,7 @@ struct Context::Backend : public Window
   : instance(CreateInstance())
   , Window(windowTitle, windowWidth, windowHeight, x, y)
   {
+    auto size = Size();
     EM_ASM(
       {
         let canvas = document.querySelector("canvas#canvas");
@@ -48,10 +49,14 @@ struct Context::Backend : public Window
         canvas.removeAttribute("style");
         canvas.id = UTF8ToString($0);
         canvas.title = UTF8ToString($1);
-        document.body.insertBefore(original, canvas);
+        canvas.width = $2;
+        canvas.height = $3;
+        document.body.insertBefore(original, canvas.nextSibling);
       },
       ID.c_str(),
-      Title()
+      Title(),
+      size.width,
+      size.height
     );
   }
 

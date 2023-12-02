@@ -115,18 +115,20 @@ struct SDLRuntime
       if(navigator["gpu"])
       {
         navigator["gpu"]["requestAdapter"]().then(
-          function(adapter) {
+          adapter => {
             adapter["requestDevice"]().then(function(device) {
               Module["preinitializedWebGPUDevice"] = device;
               _main(0, "");
             });
           },
-          function() { console.error("No WebGPU adapter; not starting"); }
+          () => {
+            console.error("No WebGPU adapter; not starting");
+          }
         );
       }
       else
       {
-        console.error("No support for WebGPU; not starting");
+        console.error("This Browser does not support WebGPU.\nSee https://github.com/gpuweb/gpuweb/wiki/Implementation-Status");
       }
     });
 #else

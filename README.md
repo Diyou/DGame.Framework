@@ -1,4 +1,5 @@
-[![CI](https://github.com/Diyou/DGame.Framework/actions/workflows/CI.yml/badge.svg?branch=main&event=push)](https://github.com/Diyou/DGame.Framework/actions/workflows/CI.yml)
+[![Matrix.Build](https://github.com/Diyou/DGame.Framework/actions/workflows/CI.yml/badge.svg?branch=main&event=push)](https://github.com/Diyou/DGame.Framework/actions/workflows/CI.yml)
+[![Page.Build](https://github.com/Diyou/DGame.Framework/actions/workflows/PublishPage.yml/badge.svg?branch=main&event=push)](https://github.com/Diyou/DGame.Framework/actions/workflows/PublishPage.yml)
 
 # DGame.Framework (Work in Progress)
 

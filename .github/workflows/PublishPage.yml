@@ -1,4 +1,4 @@
-name: Page
+name: Web CI
 
 env:
   EM_VERSION: 3.1.47
@@ -6,6 +6,10 @@ env:
   DIST_DIR: 'build/Release.WASM/dist'
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:

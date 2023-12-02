@@ -106,8 +106,12 @@ public:
   Uniform<float> rotation;
   Buffer vertexBuffer, indexBuffer;
 
-  HelloTriangle()
-  : Context("Dawn Example", 720, 480)
+  HelloTriangle(
+    const char *title = "Hello Triangle",
+    int width = 720,
+    int height = 480
+  )
+  : Context(title, width, height)
   , rotation(createUniform<float>(0))
   {
     // Setup pipeline
@@ -261,8 +265,8 @@ public:
 int
 main(int argc, const char *argv[])
 {
-  HelloTriangle triangle;
-  HelloTriangle triangle2;
+  HelloTriangle Triangle;
+  HelloTriangle SmallTriangle("Small Triangle", 480, 320);
 
   return DGame::Return;
 }
