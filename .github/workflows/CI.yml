@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  workflow_call:
 
 env:
   CACHE_FOLDER: '.cache'
@@ -13,11 +14,11 @@ env:
   DIST_DIR: 'build/Release/dist'
 
 jobs:
-  ClangFormat:
+  Format:
     uses: ./.github/workflows/FormatCheck.yml
 
   build:
-    needs: ClangFormat
+    needs: Format
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:

@@ -13,11 +13,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  ClangFormat:
+  Format:
     uses: ./.github/workflows/FormatCheck.yml
 
   Publish:
-    needs: ClangFormat
+    needs: Format
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source

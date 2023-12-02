@@ -10,12 +10,8 @@
 #include <functional>
 
 namespace DGame {
-class ThreadPool
+struct ThreadPool
 {
-  struct IThreadPool;
-  std::unique_ptr<IThreadPool> implementation;
-
-public:
   const int size;
   ThreadPool(int threads);
 
@@ -27,6 +23,10 @@ public:
   inline void Join();
 
   static ThreadPool Instance;
+
+private:
+  struct IThreadPool;
+  std::unique_ptr<IThreadPool> implementation;
 };
 
 inline ThreadPool &Tasks = ThreadPool::Instance;

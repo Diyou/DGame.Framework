@@ -1,0 +1,35 @@
+name: Deployment
+
+on: workflow_dispatch
+
+jobs:
+  CI:
+    uses: ./.github/workflows/CI.yml
+  Deploy:
+    needs: CI
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v3
+      - name: Display structure of downloaded files
+        run: |
+          for i in $(ls); do                                                                                      
+          if [ -d $i ]; then                                                                                                         
+              fname=${i##*/}                                                                               
+              cd $i                                                                                                    
+              for z in *; do                                                                                                                    
+              mv $z ../${fname}.${z}                                                                                                      
+              done
+              cd ..
+              rmdir ${fname}
+              fi
+          done
+          ls -R
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: '*'
+          allowUpdates: true
+          tag: 'latest'
+          name: 'Continuous'
+          makeLatest: 'latest'
