@@ -29,7 +29,7 @@ if(NOT
    STREQUAL
    ${GLM_VERSION}
 )
-  message("Update glm to: ${GLM_TAG}")
+  message(STATUS "Update glm to: ${GLM_TAG}")
   execute_process(
     COMMAND ${GIT_EXECUTABLE} remote set-branches origin ${GLM_TAG}
     WORKING_DIRECTORY ${GLMDIR}

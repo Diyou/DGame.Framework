@@ -48,19 +48,33 @@ jobs:
             }
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ${{env.CACHE_FOLDER}}
-          key: ${{ matrix.config.name }}.cache
-      - uses: actions/cache@v3
-        with:
-          path: ${{env.BUILD_FOLDER}}
-          key: ${{ matrix.config.name }}.build.cache
       - name: Prepare Ubuntu
         if: matrix.config.os == 'ubuntu-latest'
         run: |
-          sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libx11-xcb-dev
+          additionalPackages=(
+            libegl-dev
+            libdrm-dev
+            libgbm-dev
+            wayland-protocols
+            libwayland-dev
+            libxkbcommon-dev
+            libxrandr-dev
+            libxinerama-dev
+            libxcursor-dev
+            libxi-dev
+            libx11-xcb-dev
+            libasound2-dev
+            libjack-jackd2-dev
+            libpipewire-0.3-dev
+            libpulse-dev
+            libsndio-dev
+            libdecor-0-dev
+          )
+          sudo apt-get install -y ${additionalPackages[@]}
+
+      - uses: actions/checkout@v3
+        name: Checkout
+
       - name: Install boost
         uses: MarkusJx/install-boost@v2.4.4
         id: install-boost
@@ -71,18 +85,28 @@ jobs:
           boost_version: 1.83.0
           platform_version: ${{ matrix.config.boost-platform-version }}
           toolset: ${{ matrix.config.boost-toolset }}
-      - name: Install SDL
-        uses: libsdl-org/setup-sdl@main
-        id: sdl
-        with:
-          install-linux-dependencies: true
-          version: sdl2-latest
+          link: static
+
       - name: Setup CMake
         uses: lukka/get-cmake@latest
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitCommitId: abe01a20d3652f9443eed96bc7ec888d5d194674
+
+      - uses: actions/cache@v3
+        name: 'Use Cache: .cache'
+        id: cache-folder
+        with:
+          path: ${{env.CACHE_FOLDER}}
+          key: ${{ matrix.config.name }}.cache
+      - uses: actions/cache@v3
+        name: 'Use Cache: build'
+        id: build-folder
+        with:
+          path: ${{env.BUILD_FOLDER}}
+          key: ${{ matrix.config.name }}.build.cache
+
       - name: Build Target
         uses: lukka/run-cmake@v10
         env:
@@ -91,6 +115,7 @@ jobs:
           configurePreset: 'Release'
           buildPreset: 'Release'
           buildPresetAdditionalArgs: "['--target HelloTriangle']"
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:

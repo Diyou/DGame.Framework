@@ -6,7 +6,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.21)
 
 option(BUILD_SHARED_LIBS "Link dynamically" ON)
 option(BUILD_WASM "Compile to WASM with Emscripten" OFF)
@@ -44,7 +44,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dist)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_MACOSX_BUNDLE ON)
 
 include(glm)
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
@@ -63,6 +62,7 @@ if(${BUILD_WASM})
     INTERFACE glm::glm
   )
 else(${BUILD_WASM})
+  set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED COMPONENTS thread)
   include(Dawn)
   include(SDL2)
@@ -77,7 +77,7 @@ else(${BUILD_WASM})
            Boost::thread
     INTERFACE glm::glm
   )
-
+  #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)
 endif(${BUILD_WASM})
 
 set_target_properties(DGame.Framework PROPERTIES PREFIX "")

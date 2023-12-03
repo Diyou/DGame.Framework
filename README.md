@@ -17,7 +17,10 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 
 ### Known Issues
 
-- Wayland window freezes with PresentMode::Fifo with nvidia proprietary drivers > 545.29
+#### VSync
+
+- Browser requestAnimationFrame does not track the current monitors frequency (using primary monitor advised)
+- Native wayland windows cause heavy stutters with PresentMode::Fifo on nvidia gpu's and proprietary drivers > 545.29
 
 ### Build Requirements
 

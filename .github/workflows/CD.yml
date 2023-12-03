@@ -29,6 +29,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         name: Release
         with:
+          target_commitish: ${{ github.sha }}
           tag_name: latest
           body: |
             [**Buildlog**](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id}})

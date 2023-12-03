@@ -34,7 +34,7 @@ if(NOT
    STREQUAL
    ${DAWN_VERSION}
 )
-  message("Update Dawn to: ${DAWN_TAG}")
+  message(STATUS "Update Dawn to: ${DAWN_TAG}")
   execute_process(
     COMMAND ${GIT_EXECUTABLE} remote set-branches origin ${DAWN_TAG}
     WORKING_DIRECTORY ${DAWN_DIR}
