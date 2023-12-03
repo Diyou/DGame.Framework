@@ -26,22 +26,22 @@ jobs:
       matrix:
         config:
           - {
-              name: 'Windows Latest',
-              artifact: 'Windows-MSVC',
+              name: 'Windows',
+              artifact: 'Windows',
               os: windows-latest,
               boost-platform-version: 2022,
               boost-toolset: msvc,
             }
           - {
-              name: 'Ubuntu Latest',
-              artifact: 'Linux-GCC',
+              name: 'Ubuntu',
+              artifact: 'Linux',
               os: ubuntu-latest,
               boost-platform-version: 20.04,
               boost-toolset: gcc,
             }
           - {
-              name: 'macOS Latest',
-              artifact: 'macOS-Clang',
+              name: 'macOS',
+              artifact: 'macOS',
               os: macos-latest,
               boost-platform-version: 11,
               boost-toolset: clang,
@@ -61,11 +61,6 @@ jobs:
         if: matrix.config.os == 'ubuntu-latest'
         run: |
           sudo apt-get install -y wayland-protocols libwayland-dev libxkbcommon-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libx11-xcb-dev
-      - name: Prepare Windows
-        if: matrix.config.os == 'windows-latest'
-        uses: TheMrMilchmann/setup-msvc-dev@v3
-        with:
-          arch: x64
       - name: Install boost
         uses: MarkusJx/install-boost@v2.4.4
         id: install-boost
