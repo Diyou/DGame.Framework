@@ -3,7 +3,7 @@
 
 # DGame.Framework (Work in Progress)
 
-This Framework sets up a basic environment to begin game development with webgpu in c++.  
+This Framework sets up a basic environment to begin game development with webgpu in c++ targeting web and native platforms.  
 See [examples](Examples) on how to get started.
 
 ## Disclaimer
@@ -20,7 +20,8 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 #### VSync
 
 - Browser requestAnimationFrame does not track the current monitors frequency (using primary monitor advised)
-- Native wayland windows cause heavy stutters with PresentMode::Fifo on nvidia gpu's and proprietary drivers > 545.29
+- Hich cpu usage on _X11_ windows with PresentMode::Fifo on nvidia GPUs
+- Native _wayland_ windows cause heavy stutters with PresentMode::Fifo on nvidia GPUs and proprietary drivers > 545.29
 
 ### Build Requirements
 
