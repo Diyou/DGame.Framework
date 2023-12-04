@@ -255,6 +255,7 @@ Context::Start()
       // Render Frame
       draw();
       swapchain.Present();
+      this_thread::sleep_for(10ms);
     }
   });
   start.detach();
