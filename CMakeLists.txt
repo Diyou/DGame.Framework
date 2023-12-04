@@ -79,7 +79,7 @@ else(${BUILD_WASM})
   include(Dawn)
   include(SDL2)
 
-  add_library(DGame.Framework Source/Backends/Native.cpp)
+  add_library(DGame.Framework Source/Backends/Native.cpp Source/ThreadPool.cpp)
 
   target_link_libraries(
     DGame.Framework
@@ -96,9 +96,7 @@ set_target_properties(DGame.Framework PROPERTIES PREFIX "")
 
 target_include_directories(DGame.Framework PUBLIC Header)
 
-target_sources(
-  DGame.Framework PRIVATE Source/Backends/SDLWindow.cpp Source/ThreadPool.cpp
-)
+target_sources(DGame.Framework PRIVATE Source/Backends/SDLWindow.cpp)
 
 set(INTERMEDIATE_HEADERS ${CMAKE_BINARY_DIR}/Intermediate)
 include(Shaders)

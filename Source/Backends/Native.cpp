@@ -11,12 +11,12 @@
 #ifndef __EMSCRIPTEN__
 
 #include "DGame/Context.h"
+#include "DGame/ThreadPool.h"
 #include "SDLWindow.h"
 #include "dawn/dawn_proc.h"
 #include "dawn/native/DawnNative.h"
 
 #include <sstream>
-#include <thread>
 
 using namespace std;
 using namespace chrono;
@@ -247,7 +247,7 @@ Context::Context(
 void
 Context::Start()
 {
-  auto start = std::thread([this]() {
+  auto task = [this]() {
     while(IsRendering)
     {
       implementation->iterate();
@@ -255,10 +255,9 @@ Context::Start()
       // Render Frame
       draw();
       swapchain.Present();
-      this_thread::sleep_for(10ms);
     }
-  });
-  start.detach();
+  };
+  Tasks.Post(task);
   SDL_ShowWindow(implementation->window);
 }
 

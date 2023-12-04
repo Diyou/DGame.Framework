@@ -130,12 +130,13 @@ if(${BUILD_WASM})
               -sOFFSCREENCANVAS_SUPPORT=1
               -sOFFSCREEN_FRAMEBUFFER=1
               -sUSE_PTHREADS=1
-              -sPROXY_TO_PTHREAD=1
+              #-sPROXY_TO_PTHREAD=1
               -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
               -pthread
               #-sMALLOC="emmalloc"
   )
   target_compile_options(DGame.EMSlib_mt INTERFACE -pthread)
+  target_sources(DGame.EMSlib_mt INTERFACE Source/ThreadPool.cpp)
 
   string(
     APPEND

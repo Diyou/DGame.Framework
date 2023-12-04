@@ -266,7 +266,7 @@ int
 main(int argc, const char *argv[])
 {
   HelloTriangle Triangle;
-  // HelloTriangle SmallTriangle("Small Triangle", 480, 320);
+  HelloTriangle SmallTriangle("Small Triangle", 480, 320);
 
   return DGame::Return;
 }

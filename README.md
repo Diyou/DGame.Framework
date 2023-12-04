@@ -20,7 +20,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 #### VSync
 
 - Browser requestAnimationFrame does not track the current monitors frequency (using primary monitor advised)
-- Hich cpu usage on _X11_ windows with PresentMode::Fifo on nvidia GPUs
+- High cpu usage on _X11_ windows with PresentMode::Fifo on nvidia GPUs
 - Native _wayland_ windows cause heavy stutters with PresentMode::Fifo on nvidia GPUs and proprietary drivers > 545.29
 
 ### Build Requirements
