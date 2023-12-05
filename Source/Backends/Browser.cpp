@@ -11,10 +11,8 @@
 #ifdef __EMSCRIPTEN__
 
 #include "DGame/Context.h"
-#include "SDLWindow.h"
-#if defined(__EMSCRIPTEN_PTHREADS__)
 #include "DGame/ThreadPool.h"
-#endif
+#include "SDLWindow.h"
 
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -118,21 +116,30 @@ void
 Context::Start()
 {
 #if defined(__EMSCRIPTEN_PTHREADS__)
-  auto task = [this]() {
-    while(IsRendering)
-    {
-      draw();
-    }
-  };
-  Tasks.Post(task);
+  Tasks.Post([this]() {
+    emscripten_set_main_loop_arg(
+      [](void *userData) {
+        auto self = (Context *)userData;
+        self->draw();
+        if(!self->IsRendering)
+        {
+          emscripten_cancel_main_loop();
+        }
+      },
+      this,
+      0,
+      true
+    );
+  });
 #else
-  auto cb = [](double time, void *userData) -> EM_BOOL {
-    auto self = (Context *)userData;
-    self->draw();
-    self->Start();
-    return self->IsRendering;
-  };
-  emscripten_request_animation_frame(cb, this);
+  emscripten_request_animation_frame_loop(
+    [](double time, void *userData) -> EM_BOOL {
+      auto self = (Context *)userData;
+      self->draw();
+      return self->IsRendering;
+    },
+    this
+  );
 #endif
   SDL_ShowWindow(implementation->window);
 }

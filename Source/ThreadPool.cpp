@@ -8,9 +8,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if !defined(__EMSCRIPTEN__) || defined(__EMSCRIPTEN_PTHREADS__)
 #include "DGame/ThreadPool.h"
 
 using namespace boost;
+using namespace boost::asio;
 
 namespace DGame {
 
@@ -22,8 +24,6 @@ ThreadPool::ThreadPool(int threads)
 }
 
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-
 inline const int EMSCRIPTEN_WORKERS = []() {
   return EM_ASM_INT(return PThread.unusedWorkers.length);
 }();
@@ -33,3 +33,4 @@ ThreadPool ThreadPool::Instance(EMSCRIPTEN_WORKERS);
 ThreadPool ThreadPool::Instance(std::thread::hardware_concurrency());
 #endif
 } // namespace DGame
+#endif

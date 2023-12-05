@@ -10,7 +10,7 @@ on:
 
 env:
   CACHE_FOLDER: '.cache'
-  BUILD_FOLDER: 'build'
+  BUILD_FOLDER: 'build/Release'
   DIST_DIR: 'build/Release/dist'
 
 jobs:
@@ -99,13 +99,15 @@ jobs:
         id: cache-folder
         with:
           path: ${{env.CACHE_FOLDER}}
-          key: ${{ matrix.config.name }}.cache
+          key: ${{ matrix.config.name }}.cache#${{ hashFiles('Source/**/*.cmake') }}
+          restore-keys: ${{ matrix.config.name }}.cache#
       - uses: actions/cache@v3
         name: 'Use Cache: build'
         id: build-folder
         with:
-          path: ${{env.BUILD_FOLDER}}
-          key: ${{ matrix.config.name }}.build.cache
+          path: ${{env.BUILD_FOLDER}}/${{env.CACHE_FOLDER}}
+          key: ${{ matrix.config.name }}.build.cache#${{ hashFiles('Source/**/*.cmake') }}
+          restore-keys: ${{ matrix.config.name }}.build.cache#
 
       - name: Build Target
         uses: lukka/run-cmake@v10
@@ -116,8 +118,12 @@ jobs:
           buildPreset: 'Release'
           buildPresetAdditionalArgs: "['--target HelloTriangle']"
 
+      - name: Prepare Artifacts
+        run: |
+          tar -cvf ${{ matrix.config.artifact }}.tar -C ${{ env.DIST_DIR }} .
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.config.artifact }}
-          path: ${{ env.DIST_DIR }}
+          path: ${{ matrix.config.artifact }}.tar

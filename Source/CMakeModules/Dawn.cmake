@@ -7,7 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 
 set(DAWN_DIR ${CACHE_DIR}/dawn)
-set(DAWN_TAG chromium/6131)
+set(DAWN_TAG chromium/6167)
 
 if(NOT
    EXISTS
