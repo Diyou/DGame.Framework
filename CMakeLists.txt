@@ -49,7 +49,6 @@ set(CMAKE_MACOSX_BUNDLE ON)
 
 # Example values
 set(MACOSX_BUNDLE_GUI_IDENTIFIER io.DGame.Framework)
-set(MACOSX_BUNDLE_BUNDLE_NAME DGame.Framework)
 set(MACOSX_BUNDLE_BUNDLE_VERSION 0)
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING 0.0.1)
 set(MACOSX_BUNDLE_LONG_VERSION_STRING 0.0.1)
@@ -70,7 +69,7 @@ if(${BUILD_WASM})
   )
   target_link_libraries(
     DGame.Framework
-    PUBLIC DGame.EMSlib
+    PUBLIC DGame.EMSlib_mt
     INTERFACE glm::glm
   )
 else(${BUILD_WASM})
