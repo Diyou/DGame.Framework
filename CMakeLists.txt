@@ -69,7 +69,7 @@ if(${BUILD_WASM})
   )
   target_link_libraries(
     DGame.Framework
-    PUBLIC DGame.EMSlib_mt
+    PUBLIC DGame.EMSlib
     INTERFACE glm::glm
   )
 else(${BUILD_WASM})

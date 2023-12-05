@@ -9,8 +9,6 @@
 add_executable(HelloTriangle MACOSX_BUNDLE HelloTriangle.cpp)
 target_link_libraries(HelloTriangle PRIVATE DGame.Framework)
 
-#[[
 set_target_properties(
   HelloTriangle PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME HelloTriangle
 )
-]]
