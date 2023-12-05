@@ -17,7 +17,19 @@ namespace DGame {
 ThreadPool::ThreadPool(int threads)
 : size(threads)
 , asio::thread_pool(threads)
-{}
+{
+  std::cout << "Threads: " << threads << std::endl;
+}
 
-ThreadPool ThreadPool::Instance(thread::hardware_concurrency());
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+
+inline const int EMSCRIPTEN_WORKERS = []() {
+  return EM_ASM_INT(return PThread.unusedWorkers.length);
+}();
+
+ThreadPool ThreadPool::Instance(EMSCRIPTEN_WORKERS);
+#else
+ThreadPool ThreadPool::Instance(std::thread::hardware_concurrency());
+#endif
 } // namespace DGame

@@ -13,7 +13,7 @@
 #include "DGame/Context.h"
 #include "SDLWindow.h"
 #if defined(__EMSCRIPTEN_PTHREADS__)
-#include <thread>
+#include "DGame/ThreadPool.h"
 #endif
 
 #include <emscripten.h>
@@ -118,12 +118,13 @@ void
 Context::Start()
 {
 #if defined(__EMSCRIPTEN_PTHREADS__)
-  thread([this]() {
+  auto task = [this]() {
     while(IsRendering)
     {
       draw();
     }
-  }).detach();
+  };
+  Tasks.Post(task);
 #else
   auto cb = [](double time, void *userData) -> EM_BOOL {
     auto self = (Context *)userData;

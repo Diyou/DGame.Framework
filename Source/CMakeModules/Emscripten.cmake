@@ -19,7 +19,7 @@ if(${BUILD_WASM})
 
   else()
 
-    set(DOWNLOAD_EMSCRIPTEN_VERSION 3.1.48)
+    set(DOWNLOAD_EMSCRIPTEN_VERSION 3.1.50)
     set(ENV{EMSDK} ${CACHE_DIR}/emsdk)
     set(EMSDK_COMMAND $ENV{EMSDK}/emsdk)
     set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten)
@@ -81,7 +81,6 @@ if(${BUILD_WASM})
               -sUSE_SDL=2
               -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1
               --output_eol=linux
-              -sALLOW_MEMORY_GROWTH=0
               # -sMEMORY64
               $<$<CONFIG:Debug>:
               -fsanitize=undefined
@@ -112,6 +111,7 @@ if(${BUILD_WASM})
   target_link_options(
     DGame.EMSlib
     INTERFACE -sENVIRONMENT=web
+              -sALLOW_MEMORY_GROWTH=0
               $<$<CONFIG:Debug>:
               -sMALLOC="emmalloc-memvalidate"
               >
@@ -125,15 +125,16 @@ if(${BUILD_WASM})
   target_link_libraries(DGame.EMSlib_mt INTERFACE DGame.EMSlib.common)
   target_link_options(
     DGame.EMSlib_mt
-    INTERFACE # -sEXPORT_NAME=DGame -sMODULARIZE=1
-              -sENVIRONMENT=web,worker
+    INTERFACE -sENVIRONMENT=web,worker
               -sOFFSCREENCANVAS_SUPPORT=1
               -sOFFSCREEN_FRAMEBUFFER=1
               -sUSE_PTHREADS=1
-              #-sPROXY_TO_PTHREAD=1
-              -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
+              -sPROXY_TO_PTHREAD=1
+              #-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
+              -sPTHREAD_POOL_SIZE=4
               -pthread
-              #-sMALLOC="emmalloc"
+              -sMALLOC="emmalloc"
+              #-sMALLOC="mimalloc" -sALLOW_MEMORY_GROWTH=1
   )
   target_compile_options(DGame.EMSlib_mt INTERFACE -pthread)
   target_sources(DGame.EMSlib_mt INTERFACE Source/ThreadPool.cpp)

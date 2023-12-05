@@ -42,6 +42,7 @@ struct SDLRuntime
   }
 
   promise<int> Exit;
+  future<void> Loop;
 
   explicit SDLRuntime()
   {
@@ -132,14 +133,14 @@ struct SDLRuntime
       }
     });
 #else
-    thread([this]() {
+    Loop = async(launch::deferred, [this]() {
       while(isRunning)
       {
         ProcessEvents();
         this_thread::sleep_for(microseconds(PollingDelay));
       }
       Exit.set_value(EXIT_SUCCESS);
-    }).detach();
+    });
 #endif
   }
 
@@ -192,6 +193,7 @@ RunTimeExit::operator int()
   }
   return EXIT_SUCCESS;
 #else
+  SDLRuntime::Instance->Loop.wait();
   return SDLRuntime::Instance->Exit.get_future().get();
 #endif
 };
