@@ -40,11 +40,11 @@ struct Context::Backend : public Window
     auto size = Size();
     EM_ASM(
       {
-        let canvas = document.querySelector("canvas#canvas");
+        let canvas = document.querySelector('canvas#canvas');
         let original = canvas.cloneNode(true);
-        original.style.position = "absolute";
+        original.style.position = 'absolute';
         original.style.zIndex = -1;
-        canvas.removeAttribute("style");
+        canvas.removeAttribute('style');
         canvas.id = UTF8ToString($0);
         canvas.title = UTF8ToString($1);
         canvas.width = $2;
@@ -76,16 +76,12 @@ struct Context::Backend : public Window
   }
 
   SwapChain
-  createSwapChain(Device device, Surface surface)
+  createSwapChain(
+    Device &device,
+    Surface &surface,
+    SwapChainDescriptor &descriptor
+  )
   {
-    auto size = Size();
-    SwapChainDescriptor descriptor;
-    descriptor.usage = TextureUsage::RenderAttachment;
-    descriptor.format = TextureFormat::BGRA8Unorm;
-    descriptor.width = size.width;
-    descriptor.height = size.height;
-    descriptor.presentMode = PresentMode::Fifo;
-
     return device.CreateSwapChain(surface, &descriptor);
   }
 }; // namespace DGame
@@ -105,42 +101,35 @@ Context::Context(
   posY.has_value() ? posY.value() : SDL_WINDOWPOS_UNDEFINED
 ))
 , IsRendering(implementation->isAlive)
+, SWDescriptor{}
 {
   device = implementation->createDevice();
   surface = implementation->createSurface();
-  swapchain = implementation->createSwapChain(device, surface);
+
+  SWDescriptor.usage = TextureUsage::RenderAttachment;
+  SWDescriptor.format = TextureFormat::BGRA8Unorm;
+  SWDescriptor.presentMode = PresentMode::Fifo;
+
+  swapchain = implementation->createSwapChain(device, surface, SWDescriptor);
   queue = device.GetQueue();
 }
 
 void
 Context::Start()
 {
-#if defined(__EMSCRIPTEN_PTHREADS__)
-  Tasks.Post([this]() {
-    emscripten_set_main_loop_arg(
-      [](void *userData) {
+  auto task = [this]() {
+    emscripten_request_animation_frame_loop(
+      [](double time, void *userData) -> EM_BOOL {
         auto self = (Context *)userData;
         self->draw();
-        if(!self->IsRendering)
-        {
-          emscripten_cancel_main_loop();
-        }
+        return self->IsRendering;
       },
-      this,
-      0,
-      true
+      this
     );
-  });
-#else
-  emscripten_request_animation_frame_loop(
-    [](double time, void *userData) -> EM_BOOL {
-      auto self = (Context *)userData;
-      self->draw();
-      return self->IsRendering;
-    },
-    this
-  );
-#endif
+  };
+
+  Tasks.Post(task);
+
   SDL_ShowWindow(implementation->window);
 }
 

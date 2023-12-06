@@ -95,7 +95,10 @@ set_target_properties(DGame.Framework PROPERTIES PREFIX "")
 
 target_include_directories(DGame.Framework PUBLIC Header)
 
-target_sources(DGame.Framework PRIVATE Source/Backends/SDLWindow.cpp)
+target_sources(
+  DGame.Framework PRIVATE Source/Backends/SDLWindow.cpp
+                          Source/Backends/SDLWindowEvents.cpp
+)
 
 set(INTERMEDIATE_HEADERS ${CMAKE_BINARY_DIR}/Intermediate)
 include(Shaders)

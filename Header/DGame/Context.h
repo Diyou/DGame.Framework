@@ -30,6 +30,11 @@ static RunTimeExit Return{};
 struct Context
 {
   /**
+   * @brief Default FPSLimit is 60
+   */
+  int FPSLimit = 60;
+
+  /**
    *  @brief Creates a webgpu rendering context.
    *  @param windowTitle:   Title of window.
    *  @param windowWidth:   Width of the windowh.
@@ -55,6 +60,7 @@ struct Context
 protected:
   wgpu::Device device;
   wgpu::Surface surface;
+  wgpu::SwapChainDescriptor SWDescriptor;
   wgpu::SwapChain swapchain;
   wgpu::Queue queue;
   virtual void draw() = 0;

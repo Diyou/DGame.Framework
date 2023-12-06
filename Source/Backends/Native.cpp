@@ -17,6 +17,7 @@
 #include "dawn/native/DawnNative.h"
 
 #include <sstream>
+#include <thread>
 
 using namespace std;
 using namespace chrono;
@@ -35,7 +36,7 @@ GetPreferredSwapChainTextureFormat()
   return TextureFormat::BGRA8Unorm;
 }
 
-constexpr wgpu::AdapterType adapterType = AdapterType::DiscreteGPU;
+constexpr AdapterType adapterType = AdapterType::DiscreteGPU;
 
 void
 PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
@@ -73,22 +74,17 @@ DeviceLostCallback(
 }
 
 void
-PrintGLFWError(int code, const char *message)
-{
-  cerr << "GLFW error: " << code << " - " << message;
-}
-
-void
 DeviceLogCallback(WGPULoggingType type, const char *message, void *)
 {
   cerr << "Device log: " << message;
 }
 
-static DawnProcTable procs = dawn::native::GetProcs();
+static DawnProcTable procs = native::GetProcs();
 
 struct Context::Backend : public Window
 {
   unique_ptr<native::Instance> instance;
+  native::Adapter adapter;
 
   /**
    * @brief
@@ -109,9 +105,10 @@ struct Context::Backend : public Window
     InstanceDescriptor descriptor{};
     descriptor.features.timedWaitAnyEnable = true;
 
-    instance = make_unique<dawn::native::Instance>(
-      (WGPUInstanceDescriptor *)&descriptor
-    );
+    instance
+      = make_unique<native::Instance>((WGPUInstanceDescriptor *)&descriptor);
+
+    adapter = requestAdapter();
 
     // procs.deviceSetUncapturedErrorCallback(device.Get(), PrintDeviceError,
     // nullptr); procs.deviceSetDeviceLostCallback(device.Get(),
@@ -182,7 +179,7 @@ struct Context::Backend : public Window
     DeviceDescriptor deviceDesc;
     deviceDesc.nextInChain = &toggles;
 
-    return Device::Acquire(requestAdapter().CreateDevice(&deviceDesc));
+    return Device::Acquire(adapter.CreateDevice(&deviceDesc));
   }
 
   Surface
@@ -196,16 +193,12 @@ struct Context::Backend : public Window
   }
 
   SwapChain
-  createSwapChain(Device device, Surface surface)
+  createSwapChain(
+    Device &device,
+    Surface &surface,
+    SwapChainDescriptor &descriptor
+  )
   {
-    auto size = Size();
-    SwapChainDescriptor descriptor;
-    descriptor.usage = TextureUsage::RenderAttachment;
-    descriptor.format = GetPreferredSwapChainTextureFormat();
-    descriptor.width = size.width;
-    descriptor.height = size.height;
-    descriptor.presentMode = PresentMode::Fifo;
-
     return SwapChain::Acquire(procs.deviceCreateSwapChain(
       device.Get(),
       surface.Get(),
@@ -235,10 +228,18 @@ Context::Context(
   posY.has_value() ? posY.value() : SDL_WINDOWPOS_UNDEFINED
 ))
 , IsRendering(implementation->isAlive)
+, SWDescriptor{}
 {
   device = implementation->createDevice();
   surface = implementation->createSurface();
-  swapchain = implementation->createSwapChain(device, surface);
+
+  SWDescriptor.usage = TextureUsage::RenderAttachment;
+  SWDescriptor.format = GetPreferredSwapChainTextureFormat();
+  SWDescriptor.width = windowWidth;
+  SWDescriptor.height = windowHeight;
+  SWDescriptor.presentMode = PresentMode::Immediate;
+
+  swapchain = implementation->createSwapChain(device, surface, SWDescriptor);
   queue = device.GetQueue();
 
   device.SetDeviceLostCallback(DeviceLostCallback, this);
@@ -251,10 +252,13 @@ Context::Start()
     while(IsRendering)
     {
       implementation->iterate();
-
       // Render Frame
       draw();
       swapchain.Present();
+      if(SWDescriptor.presentMode == PresentMode::Immediate)
+      {
+        this_thread::sleep_for(milliseconds(1000 / FPSLimit));
+      }
     }
   };
   Tasks.Post(task);

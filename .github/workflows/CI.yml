@@ -28,28 +28,28 @@ jobs:
           - {
               name: 'Windows',
               artifact: 'Windows',
-              os: windows-latest,
+              os: windows-2022,
               boost-platform-version: 2022,
               boost-toolset: msvc,
             }
           - {
               name: 'Ubuntu',
               artifact: 'Linux',
-              os: ubuntu-latest,
+              os: ubuntu-22.04,
               boost-platform-version: 20.04,
               boost-toolset: gcc,
             }
           - {
               name: 'macOS',
               artifact: 'macOS',
-              os: macos-latest,
+              os: macos-11,
               boost-platform-version: 11,
               boost-toolset: clang,
             }
     timeout-minutes: 60
     steps:
       - name: Prepare Ubuntu
-        if: matrix.config.os == 'ubuntu-latest'
+        if: matrix.config.name == 'Ubuntu'
         run: |
           additionalPackages=(
             libegl-dev

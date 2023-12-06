@@ -11,14 +11,16 @@
 #if !defined(__EMSCRIPTEN__) || defined(__EMSCRIPTEN_PTHREADS__)
 #include "DGame/ThreadPool.h"
 
+#include <boost/thread/thread.hpp>
+
 using namespace boost;
-using namespace boost::asio;
+using namespace asio;
 
 namespace DGame {
 
 ThreadPool::ThreadPool(int threads)
 : size(threads)
-, asio::thread_pool(threads)
+, thread_pool(threads)
 {
   std::cout << "Threads: " << threads << std::endl;
 }
@@ -30,7 +32,7 @@ inline const int EMSCRIPTEN_WORKERS = []() {
 
 ThreadPool ThreadPool::Instance(EMSCRIPTEN_WORKERS);
 #else
-ThreadPool ThreadPool::Instance(std::thread::hardware_concurrency());
+ThreadPool ThreadPool::Instance(thread::hardware_concurrency());
 #endif
 } // namespace DGame
 #endif

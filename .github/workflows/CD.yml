@@ -57,4 +57,5 @@ jobs:
               repo: context.repo.repo,
               ref: 'tags/latest',
               sha: context.sha
+              force: true
             })

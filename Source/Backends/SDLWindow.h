@@ -32,12 +32,21 @@ struct Window
 
   bool isAlive = true;
 
-  wgpu::BackendType BackendType;
+  const wgpu::BackendType BackendType;
 
   Window(const char *title, int width, int height, int posX, int posY);
 
   const char *Title() const;
   Dimension Size() const;
+
+  void onWindowEvent(SDL_WindowEvent &event);
+
+  void onMouseButtonEvent(SDL_MouseButtonEvent &event);
+
+  void onMouseMotionEvent(SDL_MouseMotionEvent &event);
+
+  std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
+
   /**
    * @brief Retrieves the Window pointer from the associated SDL_Window pointer
    * @param window The SDL_Window pointer
@@ -45,46 +54,6 @@ struct Window
    */
   static Window *FromSDLWindow(SDL_Window *window);
   static Window *FromSDLWindowID(Uint32 &id);
-
-  void
-  onWindowEvent(SDL_WindowEvent &event)
-  {
-    switch(event.event)
-    {
-    case SDL_WINDOWEVENT_SHOWN:
-      break;
-    case SDL_WINDOWEVENT_MINIMIZED:
-      std::cout << "mini me" << std::endl;
-      break;
-    case SDL_WINDOWEVENT_CLOSE:
-      std::cout << "I died" << std::endl;
-      isAlive = false;
-      SDL_DestroyWindow(window);
-      break;
-    }
-  }
-
-  void
-  onMouseButtonEvent(SDL_MouseButtonEvent &event)
-  {
-    switch(event.type)
-    {
-    case SDL_MOUSEBUTTONDOWN:
-      std::cout << "ID:" << event.windowID << " button pressed" << std::endl;
-      break;
-    case SDL_MOUSEBUTTONUP:
-      std::cout << "button released" << std::endl;
-      break;
-    }
-  }
-
-  void
-  onMouseMotionEvent(SDL_MouseMotionEvent &event)
-  {
-    std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
-  }
-
-  std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
 
   virtual ~Window();
 };

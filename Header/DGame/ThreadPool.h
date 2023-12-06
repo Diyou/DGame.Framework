@@ -11,8 +11,8 @@
 // Compatibility Header
 #include "DGame/ThreadPoolWOT.h"
 #else
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <boost/asio/post.hpp>
+#include <boost/asio/thread_pool.hpp>
 
 namespace DGame {
 struct ThreadPool : public boost::asio::thread_pool

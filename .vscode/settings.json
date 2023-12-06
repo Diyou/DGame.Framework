@@ -17,7 +17,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-  "C_Cpp.default.browse.path": ["Header", "Source"],
+  "C_Cpp.default.browse.path": ["Source"],
   "C_Cpp.formatting": "clangFormat",
   "C_Cpp.codeAnalysis.clangTidy.enabled": true,
   "[cpp]": {
