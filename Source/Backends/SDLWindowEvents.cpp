@@ -13,7 +13,7 @@
 namespace DGame {
 
 void
-Window::onMouseButtonEvent(SDL_MouseButtonEvent &event)
+Window::onMouseButtonEvent(SDL_MouseButtonEvent &event) const
 {
   switch(event.type)
   {
@@ -27,7 +27,7 @@ Window::onMouseButtonEvent(SDL_MouseButtonEvent &event)
 }
 
 void
-Window::onMouseMotionEvent(SDL_MouseMotionEvent &event)
+Window::onMouseMotionEvent(SDL_MouseMotionEvent &event) const
 {
   std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
 }
@@ -45,8 +45,7 @@ Window::onWindowEvent(SDL_WindowEvent &event)
       break;
     case SDL_WINDOWEVENT_CLOSE:
       std::cout << "I died" << std::endl;
-      isAlive = false;
-      SDL_DestroyWindow(window);
+      Close();
       break;
     case SDL_WINDOWEVENT_RESIZED:
 #if defined(__EMSCRIPTEN__)

@@ -39,11 +39,11 @@ struct Window
   const char *Title() const;
   Dimension Size() const;
 
+  void onMouseButtonEvent(SDL_MouseButtonEvent &event) const;
+
+  void onMouseMotionEvent(SDL_MouseMotionEvent &event) const;
+
   void onWindowEvent(SDL_WindowEvent &event);
-
-  void onMouseButtonEvent(SDL_MouseButtonEvent &event);
-
-  void onMouseMotionEvent(SDL_MouseMotionEvent &event);
 
   std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
 
@@ -55,6 +55,7 @@ struct Window
   static Window *FromSDLWindow(SDL_Window *window);
   static Window *FromSDLWindowID(Uint32 &id);
 
+  void Close();
   virtual ~Window();
 };
 } // namespace DGame
