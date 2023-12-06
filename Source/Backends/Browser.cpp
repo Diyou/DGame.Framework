@@ -37,14 +37,15 @@ struct Context::Backend : public Window
   : instance(CreateInstance())
   , Window(windowTitle, windowWidth, windowHeight, x, y)
   {
-    auto size = Size();
     EM_ASM(
       {
         let canvas = document.querySelector('canvas#canvas');
+        canvas.style.aspectRatio = $2 / $3;
         let original = canvas.cloneNode(true);
         original.style.position = 'absolute';
         original.style.zIndex = -1;
         canvas.removeAttribute('style');
+        canvas.style.aspectRatio = original.style.aspectRatio;
         canvas.id = UTF8ToString($0);
         canvas.title = UTF8ToString($1);
         canvas.width = $2;
@@ -53,8 +54,8 @@ struct Context::Backend : public Window
       },
       ID.c_str(),
       Title(),
-      size.width,
-      size.height
+      windowWidth,
+      windowHeight
     );
   }
 
