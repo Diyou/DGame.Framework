@@ -76,10 +76,6 @@ Window::FromSDLWindowID(Uint32 &id)
   return FromSDLWindow(SDL_GetWindowFromID(id));
 }
 
-#if defined(__APPLE__)
-id GetLayerFromCocoaWindow(NSWindow *window);
-#endif
-
 unique_ptr<ChainedStruct>
 Window::createSurfaceDescriptor()
 {

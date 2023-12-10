@@ -56,6 +56,9 @@ struct Window
   virtual ~Window();
 
 private:
+#if defined(__APPLE__)
+  static void *GetLayerFromCocoaWindow(NSWindow *window);
+#endif
   void onMouseButtonEvent(SDL_MouseButtonEvent &event) const;
   void onMouseMotionEvent(SDL_MouseMotionEvent &event) const;
   void onWindowEvent(SDL_WindowEvent &event);

@@ -7,11 +7,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+#include "SDLWindow.h"
 
 #import <QuartzCore/CAMetalLayer.h>
 
 namespace DGame{
-id GetLayerFromCocoaWindow(NSWindow *window){
+void * Window::GetLayerFromCocoaWindow(NSWindow *window){
 @autoreleasepool {
     NSView* view = [window contentView];
 
@@ -25,5 +26,5 @@ id GetLayerFromCocoaWindow(NSWindow *window){
 
     return [view layer];
 }
-}
+};
 }

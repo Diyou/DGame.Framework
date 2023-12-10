@@ -11,7 +11,19 @@ cmake_minimum_required(VERSION 3.21)
 option(BUILD_SHARED_LIBS "Link dynamically" ON)
 option(BUILD_WASM "Compile to WASM with Emscripten" OFF)
 option(ENABLE_IPO "If supported use Interprocedural Optimization" ON)
-option(CMAKE_OSX_DEPLOYMENT_TARGET "Minimum OSX deployment version" 11.0)
+
+if(APPLE)
+  option(CMAKE_OSX_DEPLOYMENT_TARGET "Minimum OSX deployment version" 11.0)
+  # Example values
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER io.DGame.Framework)
+  set(MACOSX_BUNDLE_BUNDLE_VERSION 0)
+  set(MACOSX_BUNDLE_SHORT_VERSION_STRING 0.0.1)
+  set(MACOSX_BUNDLE_LONG_VERSION_STRING 0.0.1)
+  set(MACOSX_BUNDLE_INFO_STRING
+      "DGame.Framework version ${MACOSX_BUNDLE_SHORT_VERSION_STRING}"
+  )
+  enable_language(OBJCXX)
+endif()
 
 set(CMAKE_POLICY_DEFAULT_CMP0148 "OLD") # PythonInterp
 set(CMAKE_POLICY_DEFAULT_CMP0069 "NEW") # IPO
@@ -47,15 +59,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(CMAKE_MACOSX_BUNDLE ON)
-
-# Example values
-set(MACOSX_BUNDLE_GUI_IDENTIFIER io.DGame.Framework)
-set(MACOSX_BUNDLE_BUNDLE_VERSION 0)
-set(MACOSX_BUNDLE_SHORT_VERSION_STRING 0.0.1)
-set(MACOSX_BUNDLE_LONG_VERSION_STRING 0.0.1)
-set(MACOSX_BUNDLE_INFO_STRING
-    "DGame.Framework version ${MACOSX_BUNDLE_SHORT_VERSION_STRING}"
-)
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
 if(${BUILD_WASM})
@@ -103,11 +106,11 @@ target_sources(
   DGame.Framework
   PRIVATE Source/ThreadPool.cpp
           Source/Backends/SDL/SDLRuntime.cpp
+          Source/Backends/SDL/SDLWindow.cpp
+          Source/Backends/SDL/SDLWindowEvents.cpp
           $<$<BOOL:${APPLE}>:
           Source/Backends/SDL/SDLWindow.mm
           >
-          Source/Backends/SDL/SDLWindow.cpp
-          Source/Backends/SDL/SDLWindowEvents.cpp
 )
 
 set(INTERMEDIATE_HEADERS ${CMAKE_BINARY_DIR}/Intermediate)
@@ -116,11 +119,16 @@ include(Shaders)
 target_precompile_headers(
   DGame.Framework
   PUBLIC ${WGSL_INTERMEDIATE_HEADER}
-         $<$<BOOL:${WIN32}>:SDKDDKVer.h>
          <cstdlib>
          <memory>
          <iostream>
          <string>
+  PRIVATE $<$<BOOL:${WIN32}>:
+          SDKDDKVer.h
+          >
+          $<$<BOOL:${APPLE}>:
+          Cocoa/Cocoa.h
+          >
 )
 
 add_subdirectory(Examples EXCLUDE_FROM_ALL)
