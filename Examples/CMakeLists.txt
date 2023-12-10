@@ -6,7 +6,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-add_executable(HelloTriangle MACOSX_BUNDLE HelloTriangle.cpp)
+add_executable(
+  HelloTriangle
+  WIN32
+  MACOSX_BUNDLE HelloTriangle.cpp
+)
 target_link_libraries(HelloTriangle PRIVATE DGame.Framework)
 
 set_target_properties(

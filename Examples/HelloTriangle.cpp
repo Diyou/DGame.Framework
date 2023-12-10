@@ -253,7 +253,7 @@ public:
 
 //! [Example Main]
 int
-main(int argc, const char *argv[])
+main(int argc, char *argv[])
 {
   DGame::Launch<HelloTriangle>();
   DGame::Launch<HelloTriangle>("Small Triangle", 480, 320);

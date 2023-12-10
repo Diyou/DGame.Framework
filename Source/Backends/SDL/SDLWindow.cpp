@@ -76,6 +76,7 @@ Window::FromSDLWindowID(Uint32 &id)
   return FromSDLWindow(SDL_GetWindowFromID(id));
 }
 
+#if !defined(__APPLE__)
 unique_ptr<ChainedStruct>
 Window::createSurfaceDescriptor()
 {
@@ -96,12 +97,6 @@ Window::createSurfaceDescriptor()
   auto descriptor = make_unique<SurfaceDescriptorFromWindowsHWND>();
   descriptor->hwnd = sysWMInfo.info.win.window;
   descriptor->hinstance = sysWMInfo.info.win.hinstance;
-  return std::move(descriptor);
-#elif defined(__APPLE__)
-  auto descriptor = make_unique<SurfaceDescriptorFromMetalLayer>();
-
-  auto window = sysWMInfo.info.cocoa.window;
-  descriptor->layer = GetLayerFromCocoaWindow(window);
   return std::move(descriptor);
 #elif defined(__linux__)
   if(driver.compare("wayland") == 0)
@@ -126,6 +121,7 @@ Window::createSurfaceDescriptor()
 #error "Unsupported WGPU target platform"
 #endif
 }
+#endif
 
 Window::~Window()
 {

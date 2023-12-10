@@ -14,7 +14,11 @@ parse:
         INTERFACE: +
     set_target_properties:
       kwargs:
-        LINK_DEPENDS: +
+        PROPERTIES:
+          kwargs:
+            PREFIX: +
+            LINK_DEPENDS: +
+            MACOSX_BUNDLE_BUNDLE_NAME: +
     add_executable:
       kwargs:
         WIN32: +

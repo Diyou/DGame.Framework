@@ -71,8 +71,8 @@ if(${BUILD_WASM})
     INTERFACE --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
   set_target_properties(
-    DGame.Framework PROPERTIES
-    LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
+    DGame.Framework
+    PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
   target_link_libraries(DGame.Framework PUBLIC DGame.EMSlib_mt)
 else(${BUILD_WASM})
@@ -93,12 +93,7 @@ else(${BUILD_WASM})
   #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)
 endif(${BUILD_WASM})
 
-set_target_properties(
-  DGame.Framework
-  PROPERTIES
-  PREFIX
-  ""
-)
+set_target_properties(DGame.Framework PROPERTIES PREFIX "")
 
 target_include_directories(DGame.Framework PUBLIC Header)
 
@@ -123,12 +118,6 @@ target_precompile_headers(
          <memory>
          <iostream>
          <string>
-  PRIVATE $<$<BOOL:${WIN32}>:
-          SDKDDKVer.h
-          >
-          $<$<BOOL:${APPLE}>:
-          Cocoa/Cocoa.h
-          >
 )
 
 add_subdirectory(Examples EXCLUDE_FROM_ALL)
