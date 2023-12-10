@@ -103,6 +103,9 @@ target_sources(
   DGame.Framework
   PRIVATE Source/ThreadPool.cpp
           Source/Backends/SDL/SDLRuntime.cpp
+          $<$<BOOL:${APPLE}>:
+          Source/Backends/SDL/SDLWindow.mm
+          >
           Source/Backends/SDL/SDLWindow.cpp
           Source/Backends/SDL/SDLWindowEvents.cpp
 )

@@ -76,6 +76,10 @@ Window::FromSDLWindowID(Uint32 &id)
   return FromSDLWindow(SDL_GetWindowFromID(id));
 }
 
+#if defined(__APPLE__)
+id GetLayerFromCocoaWindow(NSWindow *window);
+#endif
+
 unique_ptr<ChainedStruct>
 Window::createSurfaceDescriptor()
 {
@@ -101,9 +105,7 @@ Window::createSurfaceDescriptor()
   auto descriptor = make_unique<SurfaceDescriptorFromMetalLayer>();
 
   auto window = sysWMInfo.info.cocoa.window;
-  [window.contentView setWantsLayer:YES];
-  descriptor->layer = [CAMetalLayer layer];
-  [window.contentView setLayer:descriptor->layer];
+  descriptor->layer = GetLayerFromCocoaWindow(window);
   return std::move(descriptor);
 #elif defined(__linux__)
   if(driver.compare("wayland") == 0)
@@ -124,6 +126,8 @@ Window::createSurfaceDescriptor()
   auto descriptor = make_unique<SurfaceDescriptorFromAndroidNativeWindow>();
   descriptor->window = sysWMInfo.info.android.window;
   return std::move(descriptor);
+#else
+#error "Unsupported WGPU target platform"
 #endif
 }
 

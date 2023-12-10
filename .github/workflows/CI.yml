@@ -42,7 +42,7 @@ jobs:
           - {
               name: 'macOS',
               artifact: 'macOS',
-              os: macos-11,
+              os: macos-12,
               boost-platform-version: 11,
               boost-toolset: clang,
             }
@@ -99,15 +99,15 @@ jobs:
         id: cache-folder
         with:
           path: ${{env.CACHE_FOLDER}}
-          key: ${{ matrix.config.name }}.cache#${{ hashFiles('Source/**/*.cmake') }}
-          restore-keys: ${{ matrix.config.name }}.cache#
+          key: ${{ matrix.config.name }}.cache
+          restore-keys: ${{ matrix.config.name }}.cache
       - uses: actions/cache@v3
         name: 'Use Cache: build'
         id: build-folder
         with:
-          path: ${{env.BUILD_FOLDER}}/${{env.CACHE_FOLDER}}
-          key: ${{ matrix.config.name }}.build.cache#${{ hashFiles('Source/**/*.cmake') }}
-          restore-keys: ${{ matrix.config.name }}.build.cache#
+          path: ${{env.BUILD_FOLDER}}
+          key: ${{ matrix.config.name }}.build.cache
+          restore-keys: ${{ matrix.config.name }}.build.cache
 
       - name: Build Target
         uses: lukka/run-cmake@v10
