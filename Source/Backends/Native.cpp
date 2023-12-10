@@ -25,7 +25,7 @@ using namespace dawn;
 
 namespace DGame {
 
-constexpr AdapterType adapterType = AdapterType::DiscreteGPU;
+constexpr wgpu::AdapterType adapterType = AdapterType::DiscreteGPU;
 
 static vector<string> enableToggles;
 static vector<string> disableToggles;

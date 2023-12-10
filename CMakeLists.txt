@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 3.21)
 option(BUILD_SHARED_LIBS "Link dynamically" ON)
 option(BUILD_WASM "Compile to WASM with Emscripten" OFF)
 option(ENABLE_IPO "If supported use Interprocedural Optimization" ON)
+option(CMAKE_OSX_DEPLOYMENT_TARGET "Minimum OSX deployment version" 11.0)
 
 set(CMAKE_POLICY_DEFAULT_CMP0148 "OLD") # PythonInterp
 set(CMAKE_POLICY_DEFAULT_CMP0069 "NEW") # IPO
@@ -56,7 +57,6 @@ set(MACOSX_BUNDLE_INFO_STRING
     "DGame.Framework version ${MACOSX_BUNDLE_SHORT_VERSION_STRING}"
 )
 
-include(glm)
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
 if(${BUILD_WASM})
   set(CMAKE_EXECUTABLE_SUFFIX .html)
@@ -71,11 +71,7 @@ if(${BUILD_WASM})
     DGame.Framework PROPERTIES
     LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
-  target_link_libraries(
-    DGame.Framework
-    PUBLIC DGame.EMSlib_mt
-    INTERFACE glm::glm
-  )
+  target_link_libraries(DGame.Framework PUBLIC DGame.EMSlib_mt)
 else(${BUILD_WASM})
   set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED COMPONENTS thread)
@@ -90,7 +86,6 @@ else(${BUILD_WASM})
            webgpu_dawn
            SDL2::SDL2
            Boost::thread
-    INTERFACE glm::glm
   )
   #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)
 endif(${BUILD_WASM})

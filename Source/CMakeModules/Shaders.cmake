@@ -75,7 +75,7 @@ endif()
 # https://cmake.org/cmake/help/latest/module/FindVulkan.html
 find_package(Vulkan COMPONENTS glslc)
 if(${Vulkan_FOUND})
-  message("SDK: $ENV{VULKAN_SDK}")
+  message("Vulkan Root: $ENV{VULKAN_SDK}")
   message("Found Vulkan at ${Vulkan_LIBRARY}")
   message("GLSC ${Vulkan_GLSLC_EXECUTABLE}")
 endif()
