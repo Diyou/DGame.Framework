@@ -11,9 +11,9 @@
 #ifdef __EMSCRIPTEN__
 
 #include "DGame/Context.h"
-#include "DGame/ThreadPool.h"
-#include "SDLWindow.h"
+#include "SDL/SDLWindow.h"
 
+#include <cassert>
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
@@ -25,7 +25,6 @@ namespace DGame {
 struct Context::Backend : public Window
 {
   Instance instance;
-  bool isAlive = true;
 
   Backend(
     const char *windowTitle,
@@ -37,7 +36,7 @@ struct Context::Backend : public Window
   : instance(CreateInstance())
   , Window(windowTitle, windowWidth, windowHeight, x, y)
   {
-    EM_ASM(
+    MAIN_THREAD_EM_ASM(
       {
         let canvas = document.querySelector('canvas#canvas');
         canvas.style.aspectRatio = $2 / $3;
@@ -59,10 +58,124 @@ struct Context::Backend : public Window
     );
   }
 
-  Device
-  createDevice()
+  /**
+   * Utility function to get a WebGPU adapter, so that
+   *     WGPUAdapter adapter = requestAdapter(options);
+   * is roughly equivalent to
+   *     const adapter = await navigator.gpu.requestAdapter(options);
+   */
+  Adapter
+  requestAdapter(const RequestAdapterOptions *options)
   {
-    return Device::Acquire(emscripten_webgpu_get_device());
+    // A simple structure holding the local information shared with the
+    // onAdapterRequestEnded callback.
+    struct UserData
+    {
+      Adapter adapter = nullptr;
+      bool requestEnded = false;
+    };
+
+    UserData userData;
+
+    // Callback called by wgpuInstanceRequestAdapter when the request returns
+    // This is a C++ lambda function, but could be any function defined in the
+    // global scope. It must be non-capturing (the brackets [] are empty) so
+    // that it behaves like a regular C function pointer, which is what
+    // wgpuInstanceRequestAdapter expects (WebGPU being a C API). The workaround
+    // is to convey what we want to capture through the pUserData pointer,
+    // provided as the last argument of wgpuInstanceRequestAdapter and received
+    // by the callback as its last argument.
+    auto onAdapterRequestEnded = [](
+                                   WGPURequestAdapterStatus status,
+                                   WGPUAdapter adapter,
+                                   const char *message,
+                                   void *pUserData
+                                 ) {
+      UserData &userData = *reinterpret_cast<UserData *>(pUserData);
+      if(status == WGPURequestAdapterStatus_Success)
+      {
+        userData.adapter = Adapter::Acquire(adapter);
+      }
+      else
+      {
+        std::cout << "Could not get WebGPU adapter: " << message << std::endl;
+      }
+      userData.requestEnded = true;
+    };
+
+    // Call to the WebGPU request adapter procedure
+    instance.RequestAdapter(options, onAdapterRequestEnded, (void *)&userData);
+
+    // In theory we should wait until onAdapterReady has been called, which
+    // could take some time (what the 'await' keyword does in the JavaScript
+    // code). In practice, we know that when the wgpuInstanceRequestAdapter()
+    // function returns its callback has been called.
+    while(!userData.requestEnded)
+    {
+      emscripten_sleep(0);
+    }
+    assert(userData.requestEnded);
+
+    return userData.adapter;
+  }
+
+  /**
+   * Utility function to get a WebGPU device, so that
+   *     WGPUAdapter device = requestDevice(adapter, options);
+   * is roughly equivalent to
+   *     const device = await adapter.requestDevice(descriptor);
+   * It is very similar to requestAdapter
+   */
+  Device
+  requestDevice(Adapter &adapter, const DeviceDescriptor *descriptor)
+  {
+    struct UserData
+    {
+      Device device = nullptr;
+      bool requestEnded = false;
+    };
+
+    UserData userData;
+
+    auto onDeviceRequestEnded = [](
+                                  WGPURequestDeviceStatus status,
+                                  WGPUDevice device,
+                                  const char *message,
+                                  void *pUserData
+                                ) {
+      UserData &userData = *reinterpret_cast<UserData *>(pUserData);
+      if(status == WGPURequestDeviceStatus_Success)
+      {
+        userData.device = Device::Acquire(device);
+      }
+      else
+      {
+        std::cout << "Could not get WebGPU device: " << message << std::endl;
+      }
+      userData.requestEnded = true;
+    };
+
+    adapter.RequestDevice(descriptor, onDeviceRequestEnded, (void *)&userData);
+
+    while(!userData.requestEnded)
+    {
+      emscripten_sleep(0);
+    }
+    assert(userData.requestEnded);
+
+    return userData.device;
+  }
+
+  Device
+  createDevice(Surface &surface)
+  {
+    RequestAdapterOptions adapterOpts = {};
+    adapterOpts.nextInChain = nullptr;
+    adapterOpts.compatibleSurface = surface;
+    Adapter adapter = requestAdapter(&adapterOpts);
+
+    DeviceDescriptor deviceDesc = {};
+    return requestDevice(adapter, &deviceDesc);
   }
 
   Surface
@@ -101,11 +214,10 @@ Context::Context(
   posX.has_value() ? posX.value() : SDL_WINDOWPOS_UNDEFINED,
   posY.has_value() ? posY.value() : SDL_WINDOWPOS_UNDEFINED
 ))
-, IsRendering(implementation->isAlive)
 , SWDescriptor{}
 {
-  device = implementation->createDevice();
   surface = implementation->createSurface();
+  device = implementation->createDevice(surface);
 
   SWDescriptor.usage = TextureUsage::RenderAttachment;
   SWDescriptor.format = TextureFormat::BGRA8Unorm;
@@ -118,6 +230,20 @@ Context::Context(
 void
 Context::Start()
 {
+#if defined(__EMSCRIPTEN_PTHREADS__)
+  auto task = [this]() {
+    emscripten_set_main_loop_arg(
+      [](void *userData) {
+        auto self = (Context *)userData;
+        self->draw();
+      },
+      this,
+      0,
+      true
+    );
+  };
+  task();
+#else
   auto task = [this]() {
     emscripten_request_animation_frame_loop(
       [](double time, void *userData) -> EM_BOOL {
@@ -128,8 +254,8 @@ Context::Start()
       this
     );
   };
-
-  Tasks.Post(task);
+  task();
+#endif
 
   SDL_ShowWindow(implementation->window);
 }

@@ -89,13 +89,6 @@ class HelloTriangle : public Context
 
     CommandBuffer commands = encoder.Finish(nullptr);
 
-    /*auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void * userData)
-    { auto _this = reinterpret_cast<Renderer*>(userData);
-      //_this->Start();
-      std::cout << "Queued work finished with status: " << status << std::endl;
-    };
-    queue.OnSubmittedWorkDone(onQueueWorkDone, this);
-    */
     queue.Submit(1, &commands);
   };
 
@@ -127,9 +120,6 @@ public:
       Indices.size() * sizeof(decay<decltype(*Indices.begin())>::type),
       BufferUsage::Index
     );
-
-    // Start rendering
-    Start();
   }
 
   void
@@ -265,8 +255,8 @@ public:
 int
 main(int argc, const char *argv[])
 {
-  HelloTriangle Triangle;
-  HelloTriangle SmallTriangle("Small Triangle", 480, 320);
+  DGame::Launch<HelloTriangle>();
+  DGame::Launch<HelloTriangle>("Small Triangle", 480, 320);
 
   return DGame::Return;
 }

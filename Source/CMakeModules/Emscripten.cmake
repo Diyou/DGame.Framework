@@ -76,7 +76,7 @@ if(${BUILD_WASM})
               -sWASM=1
               -sWASM_BIGINT=1
               -sNO_EXIT_RUNTIME=1
-              -sINVOKE_RUN=0
+              #-sINVOKE_RUN=0
               -sUSE_BOOST_HEADERS=1
               -sUSE_SDL=2
               -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1
@@ -126,18 +126,18 @@ if(${BUILD_WASM})
   target_link_options(
     DGame.EMSlib_mt
     INTERFACE -sENVIRONMENT=web,worker
-              -sOFFSCREENCANVAS_SUPPORT=1
+              #-sOFFSCREENCANVAS_SUPPORT=1
               -sOFFSCREEN_FRAMEBUFFER=1
               -sUSE_PTHREADS=1
               -sPROXY_TO_PTHREAD=1
               #-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
               -sPTHREAD_POOL_SIZE=4
+              -sPTHREAD_POOL_SIZE_STRICT=2
               -pthread
               -sMALLOC="emmalloc"
               #-sMALLOC="mimalloc" -sALLOW_MEMORY_GROWTH=1
   )
   target_compile_options(DGame.EMSlib_mt INTERFACE -pthread)
-  target_sources(DGame.EMSlib_mt INTERFACE Source/ThreadPool.cpp)
 
   string(
     APPEND

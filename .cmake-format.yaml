@@ -12,6 +12,9 @@ parse:
         PRIVATE: +
         PUBLIC: +
         INTERFACE: +
+    set_target_properties:
+      kwargs:
+        LINK_DEPENDS: +
     add_executable:
       kwargs:
         WIN32: +

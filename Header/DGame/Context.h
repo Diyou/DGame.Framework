@@ -10,9 +10,12 @@
 
 #pragma once
 
+#include "DGame/ThreadPool.h"
 #include "webgpu/webgpu_cpp.h"
 
 #include <optional>
+#include <thread>
+#include <type_traits>
 
 namespace DGame {
 
@@ -29,6 +32,8 @@ static RunTimeExit Return{};
 
 struct Context
 {
+  template<class T, class... Args>
+  friend inline void Launch(Args &&...args);
   /**
    * @brief Default FPSLimit is 60
    */
@@ -54,6 +59,8 @@ struct Context
    *  @brief Start Rendering
    */
   void Start();
+  void Restart();
+  void Close();
 
   virtual ~Context();
 
@@ -69,6 +76,32 @@ private:
   struct Backend;
   std::unique_ptr<Backend> implementation;
 
-  bool &IsRendering;
+  bool IsRendering = true;
+  bool ShouldRestart = true;
 };
+
+template<class T, class... Args>
+inline void
+Launch(Args &&...args)
+{
+  static_assert(std::is_base_of<Context, T>::value);
+#if DGAME_THREADS
+  auto Task = [... args = std::forward<Args>(args)] {
+    bool restart = false;
+    do
+    {
+      T ctx(args...);
+      ctx.Start();
+      restart = ctx.ShouldRestart;
+    } while(restart);
+  };
+  std::thread(Task).detach();
+#else
+  /**
+   * Restarting not supported yet
+   */
+  auto ctx = new T(args...);
+  ctx->Start();
+#endif
+}
 } // namespace DGame

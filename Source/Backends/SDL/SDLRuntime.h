@@ -7,6 +7,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+#pragma once
+#include "DGame/ThreadPool.h"
 #include "SDLWindow.h"
 
 #include <future>
@@ -22,30 +24,74 @@ namespace DGame {
 
 struct SDLRuntime
 {
+  friend struct Window;
+  friend RunTimeExit::operator int();
+
   vector<BackendType> SupportedBackends;
   vector<string> AvailableDrivers;
   string Driver, PreferredDriver;
+
   /**
    * @brief Delay in microseconds
    */
-
   microseconds PollingDelay{1000};
-  bool isRunning = true;
 
-  SDLRuntime(SDLRuntime &) = delete;
+  bool IsRunning = false;
+
+  SDLRuntime(const SDLRuntime &) = delete;
   void operator=(const SDLRuntime &) = delete;
 
-  ~SDLRuntime()
+  static SDLRuntime &
+  Instance()
   {
-    SDL_VideoQuit();
-    SDL_Quit();
+    static SDLRuntime instance;
+    return instance;
   }
 
   promise<int> Exit;
   future<void> Loop;
 
+  void Start();
+
+  void
+  ProcessEvents()
+  {
+    SDL_Event Event;
+    while(SDL_PollEvent(&Event))
+    {
+      // see https://wiki.libsdl.org/SDL2/SDL_Event
+      switch(Event.type)
+      {
+      default:
+        if(SDL_GetWindowFromID(Event.window.windowID) == NULL)
+        {
+          break;
+        }
+      case SDL_WINDOWEVENT:
+        Window::FromSDLWindowID(Event.window.windowID)
+          ->onWindowEvent(Event.window);
+        break;
+      case SDL_MOUSEBUTTONUP:
+      case SDL_MOUSEBUTTONDOWN:
+        Window::FromSDLWindowID(Event.window.windowID)
+          ->onMouseButtonEvent(Event.button);
+        break;
+      case SDL_MOUSEMOTION:
+        Window::FromSDLWindowID(Event.window.windowID)
+          ->onMouseMotionEvent(Event.motion);
+        break;
+      case SDL_QUIT:
+        IsRunning = false;
+        break;
+      }
+    }
+  }
+
+private:
   explicit SDLRuntime()
   {
+    std::lock_guard lock(SDLLock);
+    SDL_SetMainReady();
     SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
 #if defined(__EMSCRIPTEN__)
@@ -111,90 +157,16 @@ struct SDLRuntime
          << ")\nInitiated with: " << Driver << endl;
 
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
-#if defined(__EMSCRIPTEN__)
-    EM_ASM({
-      if(navigator["gpu"])
-      {
-        navigator["gpu"]["requestAdapter"]().then(
-          adapter => {
-            adapter["requestDevice"]().then(function(device) {
-              Module["preinitializedWebGPUDevice"] = device;
-              _main(0, "");
-            });
-          },
-          () => {
-            console.error("No WebGPU adapter; not starting");
-          }
-        );
-      }
-      else
-      {
-        console.error("This Browser does not support WebGPU.\nSee https://github.com/gpuweb/gpuweb/wiki/Implementation-Status");
-      }
-    });
-#else
-    Loop = async(launch::deferred, [this]() {
-      while(isRunning)
-      {
-        ProcessEvents();
-        this_thread::sleep_for(PollingDelay);
-      }
-      Exit.set_value(EXIT_SUCCESS);
-    });
-#endif
+    Start();
   }
 
-  void
-  ProcessEvents()
+  virtual ~SDLRuntime()
   {
-    SDL_Event Event;
-    while(SDL_PollEvent(&Event))
-    {
-      // see https://wiki.libsdl.org/SDL2/SDL_Event
-      switch(Event.type)
-      {
-      default:
-        if(SDL_GetWindowFromID(Event.window.windowID) == NULL)
-        {
-          break;
-        }
-      case SDL_WINDOWEVENT:
-        Window::FromSDLWindowID(Event.window.windowID)
-          ->onWindowEvent(Event.window);
-        break;
-      case SDL_MOUSEBUTTONUP:
-      case SDL_MOUSEBUTTONDOWN:
-        Window::FromSDLWindowID(Event.window.windowID)
-          ->onMouseButtonEvent(Event.button);
-        break;
-      case SDL_MOUSEMOTION:
-        Window::FromSDLWindowID(Event.window.windowID)
-          ->onMouseMotionEvent(Event.motion);
-        break;
-      case SDL_QUIT:
-        isRunning = false;
-        break;
-      }
-    }
+    SDL_VideoQuit();
+    SDL_Quit();
   }
 
-  static SDLRuntime *Instance;
+  std::mutex SDLLock;
 };
 
-SDLRuntime *SDLRuntime::Instance = new SDLRuntime();
-
-RunTimeExit::operator int()
-{
-#if defined(__EMSCRIPTEN__)
-  while(SDLRuntime::Instance->isRunning)
-  {
-    SDLRuntime::Instance->ProcessEvents();
-    emscripten_sleep(0);
-  }
-  return EXIT_SUCCESS;
-#else
-  SDLRuntime::Instance->Loop.wait();
-  return SDLRuntime::Instance->Exit.get_future().get();
-#endif
-};
 } // namespace DGame

@@ -44,12 +44,11 @@ Window::onWindowEvent(SDL_WindowEvent &event)
       std::cout << "mini me" << std::endl;
       break;
     case SDL_WINDOWEVENT_CLOSE:
-      std::cout << "I died" << std::endl;
-      Close();
+      WindowClosed();
       break;
     case SDL_WINDOWEVENT_RESIZED:
 #if defined(__EMSCRIPTEN__)
-      EM_ASM(
+      MAIN_THREAD_EM_ASM(
       {
         let canvas = document.querySelector(UTF8ToString($0));
         canvas.width = $1;

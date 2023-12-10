@@ -12,7 +12,9 @@
  * This Header serves as a replacement for ThreadPool.h
  * in case pthreads aren't available
  */
+#pragma once
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#define DGAME_THREADS 0
 
 namespace DGame {
 struct ThreadPool
@@ -43,7 +45,6 @@ struct ThreadPool
   static ThreadPool Instance;
 };
 
-ThreadPool ThreadPool::Instance(0);
 inline ThreadPool &Tasks = ThreadPool::Instance;
 } // namespace DGame
 #endif

@@ -11,8 +11,7 @@
 #ifndef __EMSCRIPTEN__
 
 #include "DGame/Context.h"
-#include "DGame/ThreadPool.h"
-#include "SDLWindow.h"
+#include "SDL/SDLWindow.h"
 #include "dawn/dawn_proc.h"
 #include "dawn/native/DawnNative.h"
 
@@ -25,6 +24,9 @@ using namespace wgpu;
 using namespace dawn;
 
 namespace DGame {
+
+constexpr AdapterType adapterType = AdapterType::DiscreteGPU;
+
 static vector<string> enableToggles;
 static vector<string> disableToggles;
 
@@ -35,8 +37,6 @@ GetPreferredSwapChainTextureFormat()
   // Return the adapter's preferred format when implemented.
   return TextureFormat::BGRA8Unorm;
 }
-
-constexpr AdapterType adapterType = AdapterType::DiscreteGPU;
 
 void
 PrintDeviceError(WGPUErrorType errorType, const char *message, void *)
@@ -227,7 +227,6 @@ Context::Context(
   posX.has_value() ? posX.value() : SDL_WINDOWPOS_UNDEFINED,
   posY.has_value() ? posY.value() : SDL_WINDOWPOS_UNDEFINED
 ))
-, IsRendering(implementation->isAlive)
 , SWDescriptor{}
 {
   device = implementation->createDevice();
@@ -243,31 +242,45 @@ Context::Context(
   queue = device.GetQueue();
 
   device.SetDeviceLostCallback(DeviceLostCallback, this);
+
+  implementation->WindowClosed.connect(bind(&Context::Close, this));
 }
 
 void
 Context::Start()
 {
-  auto task = [this]() {
-    while(IsRendering)
-    {
-      implementation->iterate();
-      // Render Frame
-      draw();
-      swapchain.Present();
-      if(SWDescriptor.presentMode == PresentMode::Immediate)
-      {
-        this_thread::sleep_for(milliseconds(1000 / FPSLimit));
-      }
-    }
-  };
-  Tasks.Post(task);
   SDL_ShowWindow(implementation->window);
+  while(IsRendering)
+  {
+    implementation->iterate();
+    // Render Frame
+    draw();
+    swapchain.Present();
+    if(SWDescriptor.presentMode == PresentMode::Immediate)
+    {
+      this_thread::sleep_for(milliseconds(1000 / FPSLimit));
+    }
+  }
+}
+
+void
+Context::Restart()
+{
+  ShouldRestart = true;
+  Close();
+}
+
+void
+Context::Close()
+{
+  cout << "Closing: " << implementation->Title() << endl;
+  IsRendering = false;
 }
 
 Context::~Context()
 {
   device.SetDeviceLostCallback(nullptr, nullptr);
+  cout << "got closed" << endl;
 }
 
 } // namespace DGame

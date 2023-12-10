@@ -21,8 +21,13 @@ namespace DGame {
 constexpr char WindowRequestString[] = "&";
 
 Window::Window(const char *title, int width, int height, int posX, int posY)
-: BackendType(SDLRuntime::Instance->SupportedBackends[0])
+: BackendType(SDLRuntime::Instance().SupportedBackends[0])
 {
+  auto &Runtime = SDLRuntime::Instance();
+  lock_guard lock(Runtime.SDLLock);
+  /*unique_lock guard(Runtime.Lock);
+  Runtime.CV.wait(guard, [&Runtime] { return Runtime.IsRunning; });
+  */
   window = SDL_CreateWindow(
     title,
     posX,
@@ -41,6 +46,8 @@ Window::Window(const char *title, int width, int height, int posX, int posY)
   ID = "SDLWindow" + to_string(SDL_GetWindowID(window));
   Selector = "canvas#" + ID;
 #endif
+  // guard.unlock();
+  // Runtime.CV.notify_one();
 }
 
 const char *
@@ -77,7 +84,7 @@ Window::createSurfaceDescriptor()
   SDL_VERSION(&sysWMInfo.version);
   SDL_GetWindowWMInfo(window, &sysWMInfo);
 
-  auto driver = SDLRuntime::Instance->Driver;
+  auto driver = SDLRuntime::Instance().Driver;
 
 // Create surface
 #if defined(__EMSCRIPTEN__)
@@ -92,7 +99,11 @@ Window::createSurfaceDescriptor()
   return std::move(descriptor);
 #elif defined(__APPLE__)
   auto descriptor = make_unique<SurfaceDescriptorFromMetalLayer>();
-  descriptor->layer = sysWMInfo.info.cocoa.window;
+
+  auto window = sysWMInfo.info.cocoa.window;
+  [window.contentView setWantsLayer:YES];
+  descriptor->layer = [CAMetalLayer layer];
+  [window.contentView setLayer:descriptor->layer];
   return std::move(descriptor);
 #elif defined(__linux__)
   if(driver.compare("wayland") == 0)
@@ -114,13 +125,6 @@ Window::createSurfaceDescriptor()
   descriptor->window = sysWMInfo.info.android.window;
   return std::move(descriptor);
 #endif
-}
-
-void
-Window::Close()
-{
-  isAlive = false;
-  SDL_DestroyWindow(window);
 }
 
 Window::~Window()

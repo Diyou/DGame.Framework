@@ -11,7 +11,9 @@
 #pragma once
 #include "DGame/Context.h"
 
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
+#include <boost/signals2.hpp>
 
 namespace DGame {
 /**
@@ -20,6 +22,8 @@ namespace DGame {
  */
 struct Window
 {
+  friend struct SDLRuntime;
+
   struct Dimension
   {
     int width, height;
@@ -30,8 +34,6 @@ struct Window
   std::string ID, Selector;
 #endif
 
-  bool isAlive = true;
-
   const wgpu::BackendType BackendType;
 
   Window(const char *title, int width, int height, int posX, int posY);
@@ -39,11 +41,7 @@ struct Window
   const char *Title() const;
   Dimension Size() const;
 
-  void onMouseButtonEvent(SDL_MouseButtonEvent &event) const;
-
-  void onMouseMotionEvent(SDL_MouseMotionEvent &event) const;
-
-  void onWindowEvent(SDL_WindowEvent &event);
+  boost::signals2::signal<void()> WindowClosed;
 
   std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
 
@@ -55,7 +53,11 @@ struct Window
   static Window *FromSDLWindow(SDL_Window *window);
   static Window *FromSDLWindowID(Uint32 &id);
 
-  void Close();
   virtual ~Window();
+
+private:
+  void onMouseButtonEvent(SDL_MouseButtonEvent &event) const;
+  void onMouseMotionEvent(SDL_MouseMotionEvent &event) const;
+  void onWindowEvent(SDL_WindowEvent &event);
 };
 } // namespace DGame

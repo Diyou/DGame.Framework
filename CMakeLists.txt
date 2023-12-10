@@ -37,7 +37,7 @@ endif()
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -67,9 +67,13 @@ if(${BUILD_WASM})
     DGame.Framework
     INTERFACE --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
+  set_target_properties(
+    DGame.Framework PROPERTIES
+    LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
+  )
   target_link_libraries(
     DGame.Framework
-    PUBLIC DGame.EMSlib
+    PUBLIC DGame.EMSlib_mt
     INTERFACE glm::glm
   )
 else(${BUILD_WASM})
@@ -78,7 +82,7 @@ else(${BUILD_WASM})
   include(Dawn)
   include(SDL2)
 
-  add_library(DGame.Framework Source/Backends/Native.cpp Source/ThreadPool.cpp)
+  add_library(DGame.Framework Source/Backends/Native.cpp)
 
   target_link_libraries(
     DGame.Framework
@@ -91,13 +95,21 @@ else(${BUILD_WASM})
   #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)
 endif(${BUILD_WASM})
 
-set_target_properties(DGame.Framework PROPERTIES PREFIX "")
+set_target_properties(
+  DGame.Framework
+  PROPERTIES
+  PREFIX
+  ""
+)
 
 target_include_directories(DGame.Framework PUBLIC Header)
 
 target_sources(
-  DGame.Framework PRIVATE Source/Backends/SDLWindow.cpp
-                          Source/Backends/SDLWindowEvents.cpp
+  DGame.Framework
+  PRIVATE Source/ThreadPool.cpp
+          Source/Backends/SDL/SDLRuntime.cpp
+          Source/Backends/SDL/SDLWindow.cpp
+          Source/Backends/SDL/SDLWindowEvents.cpp
 )
 
 set(INTERMEDIATE_HEADERS ${CMAKE_BINARY_DIR}/Intermediate)

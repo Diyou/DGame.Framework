@@ -20,13 +20,13 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 #### VSync
 
 - Browser requestAnimationFrame does not track the current monitors frequency (using primary monitor advised)
-- High cpu usage on _X11_ windows with PresentMode::Fifo on nvidia GPUs
+- High cpu usage on _X11_ windows with PresentMode::(Fifo/Mailbox) on nvidia GPUs
 - Native _wayland_ windows cause heavy stutters with PresentMode::Fifo on nvidia GPUs and proprietary drivers > 545.29
 
 ### Build Requirements
 
 - [cmake](https://cmake.org/) > 3.24
-- A c++17 capable build environment (clang, msvc, gcc)
+- A c++20 capable build environment (clang, msvc, gcc)
 - [boost](https://www.boost.org/) installed
 
 ### Third-party Libraries
