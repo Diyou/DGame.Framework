@@ -236,7 +236,7 @@ Context::Context(
   SWDescriptor.format = GetPreferredSwapChainTextureFormat();
   SWDescriptor.width = windowWidth;
   SWDescriptor.height = windowHeight;
-  SWDescriptor.presentMode = PresentMode::Immediate;
+  SWDescriptor.presentMode = PresentMode::Mailbox;
 
   swapchain = implementation->createSwapChain(device, surface, SWDescriptor);
   queue = device.GetQueue();

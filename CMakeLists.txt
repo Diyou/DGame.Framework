@@ -74,7 +74,7 @@ if(${BUILD_WASM})
     DGame.Framework
     PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
-  target_link_libraries(DGame.Framework PUBLIC DGame.EMSlib_mt)
+  target_link_libraries(DGame.Framework PUBLIC DGame.EMSlib)
 else(${BUILD_WASM})
   set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED COMPONENTS thread)

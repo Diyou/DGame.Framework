@@ -15,9 +15,19 @@ namespace DGame {
 void
 SDLRuntime::Start()
 {
-#if DGAME_THREADS
+  IsRunning = true;
+#if defined(__EMSCRIPTEN__)
+  emscripten_set_main_loop_arg(
+    [](void *userData) {
+      auto &Runtime = *(SDLRuntime *)userData;
+      Runtime.ProcessEvents();
+    },
+    this,
+    0,
+    false
+  );
+#else
   Loop = async(launch::deferred, [this]() {
-    IsRunning = true;
     cout << "Start Polling" << endl;
     while(IsRunning)
     {
@@ -37,17 +47,6 @@ RunTimeExit::operator int()
   cout << "Exiting. " << endl;
   return Runtime.Exit.get_future().get();
 #else
-  Runtime.IsRunning = true;
-
-  emscripten_set_main_loop_arg(
-    [](void *userData) {
-      auto &Runtime = *reinterpret_cast<SDLRuntime *>(userData);
-      Runtime.ProcessEvents();
-    },
-    &Runtime,
-    0,
-    false
-  );
   return EXIT_SUCCESS;
 #endif
 };

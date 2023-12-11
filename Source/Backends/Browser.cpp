@@ -60,7 +60,7 @@ struct Context::Backend : public Window
 
   /**
    * Utility function to get a WebGPU adapter, so that
-   *     WGPUAdapter adapter = requestAdapter(options);
+   *     Adapter adapter = requestAdapter(options);
    * is roughly equivalent to
    *     const adapter = await navigator.gpu.requestAdapter(options);
    */
@@ -77,38 +77,30 @@ struct Context::Backend : public Window
 
     UserData userData;
 
-    // Callback called by wgpuInstanceRequestAdapter when the request returns
-    // This is a C++ lambda function, but could be any function defined in the
-    // global scope. It must be non-capturing (the brackets [] are empty) so
-    // that it behaves like a regular C function pointer, which is what
-    // wgpuInstanceRequestAdapter expects (WebGPU being a C API). The workaround
-    // is to convey what we want to capture through the pUserData pointer,
-    // provided as the last argument of wgpuInstanceRequestAdapter and received
-    // by the callback as its last argument.
     auto onAdapterRequestEnded = [](
                                    WGPURequestAdapterStatus status,
                                    WGPUAdapter adapter,
                                    const char *message,
                                    void *pUserData
                                  ) {
-      UserData &userData = *reinterpret_cast<UserData *>(pUserData);
+      auto &userData = *(UserData *)pUserData;
       if(status == WGPURequestAdapterStatus_Success)
       {
         userData.adapter = Adapter::Acquire(adapter);
       }
       else
       {
-        std::cout << "Could not get WebGPU adapter: " << message << std::endl;
+        cout << "Could not get WebGPU adapter: " << message << endl;
       }
       userData.requestEnded = true;
     };
 
     // Call to the WebGPU request adapter procedure
-    instance.RequestAdapter(options, onAdapterRequestEnded, (void *)&userData);
+    instance.RequestAdapter(options, onAdapterRequestEnded, &userData);
 
     // In theory we should wait until onAdapterReady has been called, which
     // could take some time (what the 'await' keyword does in the JavaScript
-    // code). In practice, we know that when the wgpuInstanceRequestAdapter()
+    // code). In practice, we know that when the RequestAdapter()
     // function returns its callback has been called.
     while(!userData.requestEnded)
     {
@@ -121,7 +113,7 @@ struct Context::Backend : public Window
 
   /**
    * Utility function to get a WebGPU device, so that
-   *     WGPUAdapter device = requestDevice(adapter, options);
+   *     Device device = requestDevice(adapter, options);
    * is roughly equivalent to
    *     const device = await adapter.requestDevice(descriptor);
    * It is very similar to requestAdapter
@@ -143,19 +135,19 @@ struct Context::Backend : public Window
                                   const char *message,
                                   void *pUserData
                                 ) {
-      UserData &userData = *reinterpret_cast<UserData *>(pUserData);
+      auto &userData = *(UserData *)pUserData;
       if(status == WGPURequestDeviceStatus_Success)
       {
         userData.device = Device::Acquire(device);
       }
       else
       {
-        std::cout << "Could not get WebGPU device: " << message << std::endl;
+        cout << "Could not get WebGPU device: " << message << endl;
       }
       userData.requestEnded = true;
     };
 
-    adapter.RequestDevice(descriptor, onDeviceRequestEnded, (void *)&userData);
+    adapter.RequestDevice(descriptor, onDeviceRequestEnded, &userData);
 
     while(!userData.requestEnded)
     {
@@ -234,8 +226,8 @@ Context::Start()
   auto task = [this]() {
     emscripten_set_main_loop_arg(
       [](void *userData) {
-        auto self = (Context *)userData;
-        self->draw();
+        auto &self = *(Context *)userData;
+        self.draw();
       },
       this,
       0,
@@ -247,9 +239,9 @@ Context::Start()
   auto task = [this]() {
     emscripten_request_animation_frame_loop(
       [](double time, void *userData) -> EM_BOOL {
-        auto self = (Context *)userData;
-        self->draw();
-        return self->IsRendering;
+        auto &self = *(Context *)userData;
+        self.draw();
+        return self.IsRendering;
       },
       this
     );

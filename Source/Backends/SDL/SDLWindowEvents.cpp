@@ -10,6 +10,8 @@
 
 #include "SDLWindow.h"
 
+using namespace std;
+
 namespace DGame {
 
 void
@@ -18,10 +20,10 @@ Window::onMouseButtonEvent(SDL_MouseButtonEvent &event) const
   switch(event.type)
   {
   case SDL_MOUSEBUTTONDOWN:
-    std::cout << "ID:" << event.windowID << " button pressed" << std::endl;
+    cout << "ID:" << event.windowID << " button pressed" << endl;
     break;
   case SDL_MOUSEBUTTONUP:
-    std::cout << "button released" << std::endl;
+    cout << "button released" << endl;
     break;
   }
 }
@@ -29,7 +31,7 @@ Window::onMouseButtonEvent(SDL_MouseButtonEvent &event) const
 void
 Window::onMouseMotionEvent(SDL_MouseMotionEvent &event) const
 {
-  std::cout << "(" << event.x << "," << event.y << ")" << std::endl;
+  // cout << "(" << event.x << "," << event.y << ")" << endl;
 }
 
 void
@@ -41,7 +43,7 @@ Window::onWindowEvent(SDL_WindowEvent &event)
     case SDL_WINDOWEVENT_SHOWN:
       break;
     case SDL_WINDOWEVENT_MINIMIZED:
-      std::cout << "mini me" << std::endl;
+      cout << "mini me" << endl;
       break;
     case SDL_WINDOWEVENT_CLOSE:
       WindowClosed();

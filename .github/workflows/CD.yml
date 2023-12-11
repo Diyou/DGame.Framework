@@ -56,6 +56,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: 'tags/latest',
-              sha: context.sha
+              sha: context.sha,
               force: true
             })

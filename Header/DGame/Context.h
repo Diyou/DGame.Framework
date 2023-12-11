@@ -77,7 +77,7 @@ private:
   std::unique_ptr<Backend> implementation;
 
   bool IsRendering = true;
-  bool ShouldRestart = true;
+  bool ShouldRestart = false;
 };
 
 template<class T, class... Args>
@@ -98,10 +98,10 @@ Launch(Args &&...args)
   std::thread(Task).detach();
 #else
   /**
-   * Restarting not supported yet
+   * @todo Restarting not supported yet
    */
-  auto ctx = new T(args...);
-  ctx->Start();
+  auto &ctx = *new T(args...);
+  ctx.Start();
 #endif
 }
 } // namespace DGame

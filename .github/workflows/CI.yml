@@ -98,14 +98,16 @@ jobs:
         name: 'Use Cache: .cache'
         id: cache-folder
         with:
-          path: ${{env.CACHE_FOLDER}}
+          path: |
+            ${{env.CACHE_FOLDER}}
           key: ${{ matrix.config.name }}.cache
           restore-keys: ${{ matrix.config.name }}.cache
       - uses: actions/cache@v3
         name: 'Use Cache: build'
         id: build-folder
         with:
-          path: ${{env.BUILD_FOLDER}}
+          path: |
+            ${{env.BUILD_FOLDER}}
           key: ${{ matrix.config.name }}.build.cache
           restore-keys: ${{ matrix.config.name }}.build.cache
 
