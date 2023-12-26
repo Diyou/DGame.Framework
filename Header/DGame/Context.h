@@ -19,8 +19,9 @@
 
 namespace DGame {
 
-struct RunTimeExit
+struct RunTime
 {
+  void Start();
   operator int();
 };
 
@@ -28,7 +29,7 @@ struct RunTimeExit
  * @brief Used to hold the Runtime before returning from the main function
  * @snippet Examples/HelloTriangle.cpp  Example Main
  */
-static RunTimeExit Return{};
+static RunTime FromRuntime{};
 
 struct Context
 {
@@ -85,8 +86,10 @@ inline void
 Launch(Args &&...args)
 {
   static_assert(std::is_base_of<Context, T>::value);
+  FromRuntime.Start();
 #if DGAME_THREADS
   auto Task = [... args = std::forward<Args>(args)] {
+    std::cout << "Created in: " << std::this_thread::get_id() << std::endl;
     bool restart = false;
     do
     {
@@ -95,7 +98,7 @@ Launch(Args &&...args)
       restart = ctx.ShouldRestart;
     } while(restart);
   };
-  std::thread(Task).detach();
+  Tasks.Post(Task);
 #else
   /**
    * @todo Restarting not supported yet

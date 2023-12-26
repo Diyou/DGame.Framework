@@ -6,7 +6,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.25)
 
 option(BUILD_SHARED_LIBS "Link dynamically" ON)
 option(BUILD_WASM "Compile to WASM with Emscripten" OFF)
@@ -61,20 +61,27 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_MACOSX_BUNDLE ON)
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
+
+find_package(OpenAL REQUIRED)
+
 if(${BUILD_WASM})
   set(CMAKE_EXECUTABLE_SUFFIX .html)
 
   add_library(DGame.Framework STATIC Source/Backends/Browser.cpp)
 
+  target_include_directories(DGame.Framework PUBLIC ${OPENAL_INCLUDE_DIR}/AL)
+
   target_link_options(
     DGame.Framework
-    INTERFACE --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
+    INTERFACE --preload-file=./Resources
+              --shell-file=${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
   set_target_properties(
     DGame.Framework
     PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/Source/Shell.html
   )
   target_link_libraries(DGame.Framework PUBLIC DGame.EMSlib)
+  file(INSTALL Resources DESTINATION .)
 else(${BUILD_WASM})
   set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED COMPONENTS thread)
@@ -88,9 +95,11 @@ else(${BUILD_WASM})
     PUBLIC webgpu_cpp
            webgpu_dawn
            SDL2::SDL2
+           OpenAL::OpenAL
            Boost::thread
   )
   #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)
+  file(INSTALL Resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif(${BUILD_WASM})
 
 set_target_properties(DGame.Framework PROPERTIES PREFIX "")
@@ -103,6 +112,7 @@ target_sources(
           Source/Backends/SDL/SDLRuntime.cpp
           Source/Backends/SDL/SDLWindow.cpp
           Source/Backends/SDL/SDLWindowEvents.cpp
+          Source/Audio.cpp
           $<$<BOOL:${APPLE}>:
           Source/Backends/SDL/SDLWindow.mm
           >

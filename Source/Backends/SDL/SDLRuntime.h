@@ -25,7 +25,7 @@ namespace DGame {
 struct SDLRuntime
 {
   friend struct Window;
-  friend RunTimeExit::operator int();
+  friend RunTime::operator int();
 
   vector<BackendType> SupportedBackends;
   vector<string> AvailableDrivers;
@@ -157,7 +157,6 @@ private:
          << ")\nInitiated with: " << Driver << endl;
 
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
-    Start();
   }
 
   virtual ~SDLRuntime()

@@ -28,7 +28,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v3
         with:
           path: ${{env.CACHE_FOLDER}}
@@ -48,9 +48,9 @@ jobs:
           buildPreset: 'Release.WASM'
           buildPresetAdditionalArgs: "['--target HelloTriangle']"
       - name: Upload Pages Artifacts
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ${{env.DIST_DIR}}
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

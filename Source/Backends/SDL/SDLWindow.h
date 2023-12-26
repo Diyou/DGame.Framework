@@ -9,6 +9,7 @@
  */
 
 #pragma once
+#include "DGame/Audio.h"
 #include "DGame/Context.h"
 
 #define SDL_MAIN_HANDLED
@@ -35,6 +36,7 @@ struct Window
 #endif
 
   const wgpu::BackendType BackendType;
+  Audio2D::Wav clickSound;
 
   Window(const char *title, int width, int height, int posX, int posY);
 
@@ -56,8 +58,8 @@ struct Window
   virtual ~Window();
 
 private:
-  void onMouseButtonEvent(SDL_MouseButtonEvent &event) const;
-  void onMouseMotionEvent(SDL_MouseMotionEvent &event) const;
+  void onMouseButtonEvent(SDL_MouseButtonEvent &event);
+  void onMouseMotionEvent(SDL_MouseMotionEvent &event);
   void onWindowEvent(SDL_WindowEvent &event);
 };
 } // namespace DGame

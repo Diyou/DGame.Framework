@@ -8,7 +8,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "DGame/Context.h"
+#include "DGame.h"
 
 #include <vector>
 
@@ -255,10 +255,10 @@ public:
 int
 main(int argc, char *argv[])
 {
-  DGame::Launch<HelloTriangle>();
-  DGame::Launch<HelloTriangle>("Small Triangle", 480, 320);
+  Launch<HelloTriangle>();
+  Launch<HelloTriangle>("Small Triangle", 480, 320);
 
-  return DGame::Return;
+  return FromRuntime;
 }
 
 //! [Example Main]

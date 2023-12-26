@@ -79,6 +79,7 @@ if(${BUILD_WASM})
               #-sINVOKE_RUN=0
               -sUSE_BOOST_HEADERS=1
               -sUSE_SDL=2
+              -lopenal
               -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1
               --output_eol=linux
               # -sMEMORY64
@@ -89,6 +90,7 @@ if(${BUILD_WASM})
               -sASSERTIONS=1
               -sSAFE_HEAP=1
               -Wno-limited-postlink-optimizations
+              -sNO_DISABLE_EXCEPTION_CATCHING
               --emrun
               >
   )

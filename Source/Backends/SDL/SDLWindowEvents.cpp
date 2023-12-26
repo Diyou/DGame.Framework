@@ -15,12 +15,13 @@ using namespace std;
 namespace DGame {
 
 void
-Window::onMouseButtonEvent(SDL_MouseButtonEvent &event) const
+Window::onMouseButtonEvent(SDL_MouseButtonEvent &event)
 {
   switch(event.type)
   {
   case SDL_MOUSEBUTTONDOWN:
     cout << "ID:" << event.windowID << " button pressed" << endl;
+    clickSound.Play();
     break;
   case SDL_MOUSEBUTTONUP:
     cout << "button released" << endl;
@@ -29,7 +30,7 @@ Window::onMouseButtonEvent(SDL_MouseButtonEvent &event) const
 }
 
 void
-Window::onMouseMotionEvent(SDL_MouseMotionEvent &event) const
+Window::onMouseMotionEvent(SDL_MouseMotionEvent &event)
 {
   // cout << "(" << event.x << "," << event.y << ")" << endl;
 }

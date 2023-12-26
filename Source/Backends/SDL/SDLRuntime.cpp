@@ -15,6 +15,11 @@ namespace DGame {
 void
 SDLRuntime::Start()
 {
+  if(IsRunning)
+  {
+    return;
+  }
+  cout << "Mainloop Created in: " << std::this_thread::get_id() << endl;
   IsRunning = true;
 #if defined(__EMSCRIPTEN__)
   emscripten_set_main_loop_arg(
@@ -27,27 +32,37 @@ SDLRuntime::Start()
     false
   );
 #else
-  Loop = async(launch::deferred, [this]() {
+  auto Task = [this]() {
     cout << "Start Polling" << endl;
+    cout << "Polling in: (" << this_thread::get_id() << ")" << endl;
     while(IsRunning)
     {
       ProcessEvents();
       this_thread::sleep_for(PollingDelay);
     }
     Exit.set_value(EXIT_SUCCESS);
-  });
+  };
+  Loop = async(launch::deferred, Task);
+  // Tasks.Defer(Task);
 #endif
 }
 
-RunTimeExit::operator int()
+void
+RunTime::Start()
+{
+  SDLRuntime::Instance().Start();
+}
+
+RunTime::operator int()
 {
   auto &Runtime = SDLRuntime::Instance();
-#if !defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__)
+  return EXIT_SUCCESS;
+#else
   Runtime.Loop.wait();
+  Tasks.join();
   cout << "Exiting. " << endl;
   return Runtime.Exit.get_future().get();
-#else
-  return EXIT_SUCCESS;
 #endif
 };
 

@@ -72,7 +72,7 @@ jobs:
           )
           sudo apt-get install -y ${additionalPackages[@]}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout
 
       - name: Install boost
@@ -125,7 +125,7 @@ jobs:
           tar -cvf ${{ matrix.config.artifact }}.tar -C ${{ env.DIST_DIR }} .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.artifact }}
           path: ${{ matrix.config.artifact }}.tar

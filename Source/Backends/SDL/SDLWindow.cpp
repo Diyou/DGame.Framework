@@ -22,12 +22,11 @@ constexpr char WindowRequestString[] = "&";
 
 Window::Window(const char *title, int width, int height, int posX, int posY)
 : BackendType(SDLRuntime::Instance().SupportedBackends[0])
+, clickSound("./Resources/Sound/shooting-sound-fx-159024.wav")
 {
   auto &Runtime = SDLRuntime::Instance();
   lock_guard lock(Runtime.SDLLock);
-  /*unique_lock guard(Runtime.Lock);
-  Runtime.CV.wait(guard, [&Runtime] { return Runtime.IsRunning; });
-  */
+
   window = SDL_CreateWindow(
     title,
     posX,
@@ -42,12 +41,11 @@ Window::Window(const char *title, int width, int height, int posX, int posY)
     throw runtime_error("Could not create SDL Window");
   }
   SDL_SetWindowData(window, WindowRequestString, this);
+
 #ifdef __EMSCRIPTEN__
   ID = "SDLWindow" + to_string(SDL_GetWindowID(window));
   Selector = "canvas#" + ID;
 #endif
-  // guard.unlock();
-  // Runtime.CV.notify_one();
 }
 
 const char *
