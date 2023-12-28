@@ -73,11 +73,11 @@ if(${BUILD_WASM})
     DGame.EMSlib.common
     INTERFACE -sUSE_WEBGPU
               -sASYNCIFY
-              -sWASM=1
-              -sWASM_BIGINT=1
-              -sNO_EXIT_RUNTIME=1
+              -sWASM
+              -sWASM_BIGINT
+              -sNO_EXIT_RUNTIME
               #-sINVOKE_RUN=0
-              -sUSE_BOOST_HEADERS=1
+              -sUSE_BOOST_HEADERS
               -sUSE_SDL=2
               -lopenal
               -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1
@@ -128,10 +128,10 @@ if(${BUILD_WASM})
   target_link_options(
     DGame.EMSlib_mt
     INTERFACE -sENVIRONMENT=web,worker
-              #-sOFFSCREENCANVAS_SUPPORT=1
-              -sOFFSCREEN_FRAMEBUFFER=1
-              -sUSE_PTHREADS=1
-              -sPROXY_TO_PTHREAD=1
+              #-sOFFSCREENCANVAS_SUPPORT
+              -sOFFSCREEN_FRAMEBUFFER
+              -sUSE_PTHREADS
+              -sPROXY_TO_PTHREAD
               #-sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
               -sPTHREAD_POOL_SIZE=4
               -sPTHREAD_POOL_SIZE_STRICT=2

@@ -95,7 +95,7 @@ else(${BUILD_WASM})
     PUBLIC webgpu_cpp
            webgpu_dawn
            SDL2::SDL2
-           OpenAL::OpenAL
+           OpenAL::OpenAL # Requires cmake 3.25
            Boost::thread
   )
   #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)

@@ -255,5 +255,6 @@ Context::Start()
 Context::~Context()
 {}
 
+std::mutex Context::RuntimeLock;
 } // namespace DGame
 #endif

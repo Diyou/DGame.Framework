@@ -19,7 +19,6 @@ SDLRuntime::Start()
   {
     return;
   }
-  cout << "Mainloop Created in: " << std::this_thread::get_id() << endl;
   IsRunning = true;
 #if defined(__EMSCRIPTEN__)
   emscripten_set_main_loop_arg(
@@ -33,8 +32,6 @@ SDLRuntime::Start()
   );
 #else
   auto Task = [this]() {
-    cout << "Start Polling" << endl;
-    cout << "Polling in: (" << this_thread::get_id() << ")" << endl;
     while(IsRunning)
     {
       ProcessEvents();

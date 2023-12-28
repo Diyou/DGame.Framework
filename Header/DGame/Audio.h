@@ -44,54 +44,86 @@ namespace Audio2D {
 /**
  * @brief Audio implementation using OpenAL
  */
-namespace Audio3D{
-struct Device
-{
-  static Device &
-  Default()
+namespace Audio3D {
+  struct Device
   {
-    static Device instance(NULL);
-    return instance;
-  }
-
-  static void
-  Use(Device &device)
-  {
-    alcMakeContextCurrent(device.context);
-  }
-
-  Device(const char *DeviceName = NULL)
-  {
-    handle = alcOpenDevice(DeviceName);
-    if(handle == NULL)
+    static Device &
+    Default()
     {
-      throw std::runtime_error("Could not open Audio Device");
+      static Device instance(NULL);
+      return instance;
     }
-    context = alcCreateContext(handle, NULL);
-  }
 
-  ~Device()
+    static void
+    Use(Device &device)
+    {
+      if(!alcMakeContextCurrent(device.context))
+      {
+        switch(alGetError())
+        {
+        case ALC_INVALID_CONTEXT:
+          throw std::runtime_error("The specified context is invalid");
+          break;
+        default:
+          throw std::runtime_error("Unknown error.");
+          break;
+        }
+      }
+    }
+
+    Device(const char *DeviceName = NULL)
+    {
+      ALCenum error;
+      handle = alcOpenDevice(DeviceName);
+      if(handle == NULL)
+      {
+        throw std::runtime_error("Could not open Audio Device");
+      }
+      error = alGetError();
+
+      context = alcCreateContext(handle, NULL);
+      error = alGetError();
+      if(context == NULL)
+      {
+        switch(error)
+        {
+        case ALC_INVALID_DEVICE:
+          throw std::runtime_error(
+            "The specified device is not a valid output device."
+          );
+          break;
+        case ALC_INVALID_VALUE:
+          throw std::runtime_error(
+            "An additional context can not be created for this device."
+          );
+          break;
+        default:
+          throw std::runtime_error("Unknown error.");
+          break;
+        }
+      }
+    }
+
+    ~Device()
+    {
+      alcDestroyContext(context);
+      alcCloseDevice(handle);
+    }
+
+  private:
+    ALCdevice *handle;
+    ALCcontext *context;
+  };
+
+  struct Wav
   {
-    alcDestroyContext(context);
-    alcCloseDevice(handle);
-  }
+    ALuint Source, Buffer;
 
-private:
-  ALCdevice *handle;
-  ALCcontext *context;
-};
+    Wav(const char *fileName);
 
-struct Wav
-{
-  Wav(const char *fileName)
-  {}
+    void Play();
 
-  void
-  Play()
-  {}
-
-  virtual ~Wav()
-  {}
-};
-}
+    virtual ~Wav();
+  };
+} // namespace Audio3D
 } // namespace DGame

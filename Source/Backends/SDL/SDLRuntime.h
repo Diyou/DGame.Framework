@@ -90,7 +90,6 @@ struct SDLRuntime
 private:
   explicit SDLRuntime()
   {
-    std::lock_guard lock(SDLLock);
     SDL_SetMainReady();
     SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
@@ -164,8 +163,6 @@ private:
     SDL_VideoQuit();
     SDL_Quit();
   }
-
-  std::mutex SDLLock;
 };
 
 } // namespace DGame

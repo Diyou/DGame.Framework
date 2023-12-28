@@ -79,6 +79,8 @@ private:
 
   bool IsRendering = true;
   bool ShouldRestart = false;
+
+  static std::mutex RuntimeLock;
 };
 
 template<class T, class... Args>
@@ -89,15 +91,18 @@ Launch(Args &&...args)
   FromRuntime.Start();
 #if DGAME_THREADS
   auto Task = [... args = std::forward<Args>(args)] {
-    std::cout << "Created in: " << std::this_thread::get_id() << std::endl;
     bool restart = false;
     do
     {
+      std::unique_lock lock(Context::RuntimeLock);
       T ctx(args...);
+      lock.unlock();
       ctx.Start();
       restart = ctx.ShouldRestart;
     } while(restart);
   };
+  // std::thread(Task).detach();
+  // std::this_thread::sleep_for(std::chrono::milliseconds(500));
   Tasks.Post(Task);
 #else
   /**

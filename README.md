@@ -41,7 +41,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 
 ### Examples
 
-- [HelloTriangle](https://diyou.github.io/DGame.Framework/HelloTriangle.html) Running two Triangles in parallel
+- [HelloTriangle](https://diyou.github.io/DGame.Framework/HelloTriangle.html) Running 2 rotating Triangles in parallel (~200 Lines of Code)
 
 ### License
 

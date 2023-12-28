@@ -36,7 +36,7 @@ struct Window
 #endif
 
   const wgpu::BackendType BackendType;
-  Audio2D::Wav clickSound;
+  Audio3D::Wav clickSound;
 
   Window(const char *title, int width, int height, int posX, int posY);
 

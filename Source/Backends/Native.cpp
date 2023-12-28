@@ -137,7 +137,7 @@ struct Context::Backend : public Window
       adapter.GetProperties(&adapterProperties);
       stringstream ss;
       ss //<< "Type:" << adapterProperties.adapterType
-        << "\nGPU: " << adapterProperties.name
+        << "GPU: " << adapterProperties.name
         << "\nDriver: " << adapterProperties.driverDescription;
 
       cout << ss.str() << endl;
@@ -283,5 +283,6 @@ Context::~Context()
   cout << "got closed" << endl;
 }
 
+std::mutex Context::RuntimeLock;
 } // namespace DGame
 #endif

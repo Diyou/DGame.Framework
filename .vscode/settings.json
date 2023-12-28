@@ -4,7 +4,6 @@
   "licenser.customHeader": "@FILENAME@ - @PROJECT@\n\nCopyright (c) @YEAR@ @AUTHOR@\nAll rights reserved.\n\nThis source code is licensed under the MIT license found in the\nLICENSE file in the root directory of this source tree.",
   "licenser.useSingleLineStyle": false,
   "licenser.disableAutoHeaderInsertion": false,
-  "licenser.disableAutoSave": false,
   "files.trimFinalNewlines": true,
   "output.smartScroll.enabled": false,
   "editor.guides.indentation": true,
@@ -19,7 +18,6 @@
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.default.browse.path": ["Source"],
   "C_Cpp.formatting": "clangFormat",
-  "C_Cpp.codeAnalysis.clangTidy.enabled": true,
   "[cpp]": {
     "files.insertFinalNewline": true
   },

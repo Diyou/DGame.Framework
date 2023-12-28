@@ -22,11 +22,8 @@ constexpr char WindowRequestString[] = "&";
 
 Window::Window(const char *title, int width, int height, int posX, int posY)
 : BackendType(SDLRuntime::Instance().SupportedBackends[0])
-, clickSound("./Resources/Sound/shooting-sound-fx-159024.wav")
+, clickSound("./Resources/Sound/mixkit-arcade-game-jump-coin-216.wav")
 {
-  auto &Runtime = SDLRuntime::Instance();
-  lock_guard lock(Runtime.SDLLock);
-
   window = SDL_CreateWindow(
     title,
     posX,

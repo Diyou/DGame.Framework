@@ -65,4 +65,41 @@ namespace Audio2D {
   }
 
 } // namespace Audio2D
+
+namespace Audio3D {
+  Wav::Wav(const char *fileName)
+  {
+    Device::Use(Device::Default());
+
+    Uint32 wav_length;
+    Uint8 *wav_buffer;
+    SDL_AudioSpec spec;
+    if(SDL_LoadWAV(fileName, &spec, &wav_buffer, &wav_length) == NULL)
+    {
+      // File not found
+      throw runtime_error(format("{}", SDL_GetError()));
+    }
+
+    alGenSources(1, &Source);
+    alGenBuffers(1, &Buffer);
+
+    alBufferData(Buffer, AL_FORMAT_STEREO16, wav_buffer, wav_length, spec.freq);
+
+    alSourcei(Source, AL_BUFFER, Buffer);
+    SDL_FreeWAV(wav_buffer);
+  }
+
+  void
+  Wav::Play()
+  {
+    alSourcei(Source, AL_LOOPING, AL_FALSE);
+    alSourcePlay(Source);
+  }
+
+  Wav::~Wav()
+  {
+    alDeleteSources(1, &Source);
+    alDeleteBuffers(1, &Buffer);
+  }
+} // namespace Audio3D
 } // namespace DGame
