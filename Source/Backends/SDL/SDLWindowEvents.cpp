@@ -20,11 +20,10 @@ Window::onMouseButtonEvent(SDL_MouseButtonEvent &event)
   switch(event.type)
   {
   case SDL_MOUSEBUTTONDOWN:
-    cout << "ID:" << event.windowID << " button pressed" << endl;
-    clickSound.Play();
+    MouseDown(event.x, event.y);
     break;
   case SDL_MOUSEBUTTONUP:
-    cout << "button released" << endl;
+    MouseUp(event.x, event.y);
     break;
   }
 }
@@ -32,7 +31,7 @@ Window::onMouseButtonEvent(SDL_MouseButtonEvent &event)
 void
 Window::onMouseMotionEvent(SDL_MouseMotionEvent &event)
 {
-  // cout << "(" << event.x << "," << event.y << ")" << endl;
+  MouseMove(event.x, event.y);
 }
 
 void

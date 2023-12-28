@@ -12,5 +12,4 @@ _deps
 
 /build
 /.cache
-/Resources/*
 CMakeUserPresets.json

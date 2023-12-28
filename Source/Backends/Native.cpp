@@ -244,6 +244,9 @@ Context::Context(
   device.SetDeviceLostCallback(DeviceLostCallback, this);
 
   implementation->WindowClosed.connect(bind(&Context::Close, this));
+  implementation->MouseDown.connect(MouseDown);
+  implementation->MouseUp.connect(MouseUp);
+  implementation->MouseMove.connect(MouseMove);
 }
 
 void

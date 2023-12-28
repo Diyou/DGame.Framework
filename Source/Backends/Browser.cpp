@@ -217,6 +217,10 @@ Context::Context(
 
   swapchain = implementation->createSwapChain(device, surface, SWDescriptor);
   queue = device.GetQueue();
+
+  implementation->MouseDown.connect(MouseDown);
+  implementation->MouseUp.connect(MouseUp);
+  implementation->MouseMove.connect(MouseMove);
 }
 
 void

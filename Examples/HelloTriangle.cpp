@@ -9,7 +9,9 @@
  */
 
 #include "DGame.h"
+#include "DGame/Audio.h"
 
+#include <format>
 #include <vector>
 
 using namespace std;
@@ -99,6 +101,8 @@ public:
   Uniform<float> rotation;
   Buffer vertexBuffer, indexBuffer;
 
+  Audio3D::Wav clickSound;
+
   HelloTriangle(
     const char *title = "Hello Triangle",
     int width = 720,
@@ -106,6 +110,7 @@ public:
   )
   : Context(title, width, height)
   , rotation(createUniform<float>(0))
+  , clickSound("./Resources/Sound/mixkit-arcade-game-jump-coin-216.wav")
   {
     // Setup pipeline
     Setup();
@@ -120,6 +125,11 @@ public:
       Indices.size() * sizeof(decay<decltype(*Indices.begin())>::type),
       BufferUsage::Index
     );
+
+    MouseDown.connect([this](int x, int y) {
+      clickSound.Play();
+      cout << format("X:{}/Y:{}", x, y) << endl;
+    });
   }
 
   void

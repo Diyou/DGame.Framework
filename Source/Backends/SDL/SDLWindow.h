@@ -9,7 +9,6 @@
  */
 
 #pragma once
-#include "DGame/Audio.h"
 #include "DGame/Context.h"
 
 #define SDL_MAIN_HANDLED
@@ -36,7 +35,6 @@ struct Window
 #endif
 
   const wgpu::BackendType BackendType;
-  Audio3D::Wav clickSound;
 
   Window(const char *title, int width, int height, int posX, int posY);
 
@@ -44,6 +42,7 @@ struct Window
   Dimension Size() const;
 
   boost::signals2::signal<void()> WindowClosed;
+  boost::signals2::signal<void(int x, int y)> MouseDown, MouseUp, MouseMove;
 
   std::unique_ptr<wgpu::ChainedStruct> createSurfaceDescriptor();
 

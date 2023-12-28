@@ -11,6 +11,7 @@
 #pragma once
 
 #include "DGame/ThreadPool.h"
+#include "boost/signals2.hpp"
 #include "webgpu/webgpu_cpp.h"
 
 #include <optional>
@@ -55,6 +56,9 @@ struct Context
     std::optional<int> posX = std::nullopt,
     std::optional<int> posY = std::nullopt
   );
+
+  // Event hooks
+  boost::signals2::signal<void(int x, int y)> MouseDown, MouseUp, MouseMove;
 
   /** @fn void Backend::Start()
    *  @brief Start Rendering
@@ -102,7 +106,6 @@ Launch(Args &&...args)
     } while(restart);
   };
   // std::thread(Task).detach();
-  // std::this_thread::sleep_for(std::chrono::milliseconds(500));
   Tasks.Post(Task);
 #else
   /**
