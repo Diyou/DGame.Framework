@@ -34,6 +34,7 @@ See [Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation
 | Library                                                     | Usecase                      | License                                                                    |
 | :---------------------------------------------------------- | :--------------------------- | :------------------------------------------------------------------------- |
 | [SDL2](https://github.com/libsdl-org/SDL)                   | Window creation, Audio, UI   | [Zlib](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt)            |
+| [OpenAL-Soft](https://github.com/kcat/openal-soft/)         | Spatial Audio                | [LGPL-2](https://github.com/kcat/openal-soft/blob/master/COPYING)(\*)      |
 | [emscripten](https://github.com/emscripten-core/emscripten) | WASM webgpu implementation   | [MIT](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)(\*) |
 | [dawn](https://dawn.googlesource.com/)                      | Native webgpu implementation | [BSD-3](https://dawn.googlesource.com/dawn/+/HEAD/LICENSE)                 |
 

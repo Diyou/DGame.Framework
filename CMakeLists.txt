@@ -6,7 +6,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.24)
 
 option(BUILD_SHARED_LIBS "Link dynamically" ON)
 option(BUILD_WASM "Compile to WASM with Emscripten" OFF)
@@ -62,8 +62,6 @@ set(CMAKE_MACOSX_BUNDLE ON)
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
 
-find_package(OpenAL REQUIRED)
-
 if(${BUILD_WASM})
   set(CMAKE_EXECUTABLE_SUFFIX .html)
 
@@ -87,6 +85,7 @@ else(${BUILD_WASM})
   find_package(Boost REQUIRED COMPONENTS thread)
   include(Dawn)
   include(SDL2)
+  include(OpenAL)
 
   add_library(DGame.Framework Source/Backends/Native.cpp)
 
@@ -95,7 +94,7 @@ else(${BUILD_WASM})
     PUBLIC webgpu_cpp
            webgpu_dawn
            SDL2::SDL2
-           OpenAL::OpenAL # Requires cmake 3.25
+           OpenAL::OpenAL
            Boost::thread
   )
   #install(FILES $<TARGET_RUNTIME_DLLS:DGame.Framework> TYPE BIN)

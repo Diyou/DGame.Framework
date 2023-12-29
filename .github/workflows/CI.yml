@@ -69,13 +69,8 @@ jobs:
             libpulse-dev
             libsndio-dev
             libdecor-0-dev
-            libopenal-dev
           )
           sudo apt-get install -y ${additionalPackages[@]}
-      - name: Prepare Windows
-        if: matrix.config.name == 'Windows'
-        run: |
-          choco install openalsdk
 
       - uses: actions/checkout@v4
         name: Checkout
